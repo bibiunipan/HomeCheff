@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home Cheff</title>
+  <meta name="description" content="Descubra receitas saudáveis e fáceis com o assistente inteligente HOMECHEF. Ingredientes acessíveis e passo a passo rápido."/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <style>
+    :root {
+      --roxo: #A020F0;
+      --branco: #ffffff;
+      --preto: #000000;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: linear-gradient(to right, var(--branco), var(--branco));
+      color: var(--preto);
+      line-height: 1.6;
+    }
+
+    header {
+  background: var(--roxo);
+  padding: 20px;
+  color: var(--branco);
+  text-align: center;
+}
+
+.header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+nav {
+  margin-top: 10px;
+}
+
+nav a {
+  margin: 0 15px;
+  color: var(--branco);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+  .header-container {
+    flex-direction: column;
+  }
+
+  nav a {
+    font-size: 1.1rem;
+  }
+}
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+      background: var(--branco);
+      text-align: center;
+    }
+
+    @media (min-width: 768px) {
+      .hero {
+        flex-direction: row;
+        justify-content: space-around;
+        text-align: left;
+      }
+    }
+
+    .hero-text {
+      max-width: 500px;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: var(--roxo);
+      font-weight: bold;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .hero a {
+      background: var(--roxo);
+      color: var(--branco);
+      padding: 15px 25px;
+      text-decoration: none;
+      font-size: 1rem;
+      border-radius: 8px;
+      display: inline-block;
+      max-width: 300px;
+      width: 100%;
+      text-align: center;
+      transition: background 0.3s ease;
+    }
+
+    .hero a:hover {
+      background: #8000c8;
+    }
+
+    .hero a i {
+      margin-right: 8px;
+    }
+
+    .hero img {
+      max-width: 320px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      margin-top: 30px;
+    }
+
+    @media (min-width: 768px) {
+      .hero img {
+        margin-top: 0;
+      }
+    }
+
+    .benefits {
+      padding: 60px 20px;
+      background: var(--branco);
+      text-align: center;
+    }
+
+    .benefits h2 {
+      font-size: 2rem;
+      color: var(--roxo);
+      margin-bottom: 40px;
+    }
+
+    .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--branco);
+      border: 2px solid var(--roxo);
+      border-radius: 10px;
+      padding: 20px;
+      width: 250px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 16px rgba(160, 32, 240, 0.2);
+    }
+
+    .card h3 {
+      color: var(--roxo);
+      margin-bottom: 10px;
+    }
+
+    footer {
+      background: var(--roxo);
+      color: var(--branco);
+      text-align: center;
+      padding: 20px;
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <img src="logo.png" alt="Logo HomeChef" class="logo" />
+      <h1>HOMECHEF</h1>
+      <nav>
+        <a href="#hero">Início</a>
+        <a href="#benefits">Benefícios</a>
+        <a href="#contato">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Transformando <br>ingredientes em<br> inspiração culinária</h1>
+      <p>Seu assistente inteligente para criar as melhores receitas saudáveis.</p>
+      <a href="#"><i class="fab fa-whatsapp"></i> Experimente agora</a>
+    </div>
+    <img src="salada.jpg" alt="Imagem de uma salada colorida com vegetais frescos" />
+  </section>
+
+  <section class="benefits" id="benefits">
+    <h2>Benefícios</h2>
+    <div class="cards-container">
+      <div class="card">
+        <h3>Receitas Personalizadas</h3>
+        <p>De acordo com seu tempo, dieta e preferências.</p>
+      </div>
+      <div class="card">
+        <h3>Substituições Inteligentes</h3>
+        <p>Alternativas saudáveis e econômicas para sua despensa.</p>
+      </div>
+      <div class="card">
+        <h3>Dicas de Cozinha</h3>
+        <p>Melhore suas habilidades culinárias com truques simples.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Home Cheff. Todos os direitos reservados.
+  </footer>
+
+</body>
+</html>
+
