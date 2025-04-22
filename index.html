@@ -31,45 +31,45 @@
     }
 
     header {
-  background: var(--roxo);
-  padding: 16px;
-  color: var(--branco);
-  text-align: center;
-}
+      background: var(--roxo);
+      padding: 16px;
+      color: var(--branco);
+      text-align: center;
+    }
 
-.header-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
+    .header-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
-.logo {
-  height: 80px;
-  margin-bottom: 10px;
-}
+    .logo {
+      height: 80px;
+      margin-bottom: 10px;
+    }
 
-nav {
-  margin-top: 10px;
-}
+    nav {
+      margin-top: 10px;
+    }
 
-nav a {
-  margin: 0 10px;
-  color: var(--branco);
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1rem;
-}
+    nav a {
+      margin: 0 10px;
+      color: var(--branco);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+    }
 
-@media (min-width: 700px) {
-  .header-container {
-    flex-direction: column;
-  }
+    @media (min-width: 700px) {
+      .header-container {
+        flex-direction: column;
+      }
 
-  nav a {
-    font-size: 1.1rem;
-  }
-}
+      nav a {
+        font-size: 1.1rem;
+      }
+    }
 
     .hero {
       display: flex;
@@ -178,6 +178,52 @@ nav a {
       margin-bottom: 10px;
     }
 
+    .sobre-homecheff {
+      padding: 60px 20px;
+      background-color: var(--branco);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .sobre-homecheff.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .sobre-titulo {
+      font-size: 2.3rem;
+      color: var(--roxo);
+      margin-bottom: 30px;
+      font-weight: bold;
+    }
+
+    .sobre-texto {
+      max-width: 800px;
+      margin: 0 auto;
+      font-size: 1.2rem;
+      line-height: 1.8;
+      color: #333;
+      text-align: justify;
+      padding: 0 10px;
+    }
+
+    .sobre-texto p {
+      margin-bottom: 1.2rem;
+    }
+
+    @media (max-width: 600px) {
+      .sobre-titulo {
+        font-size: 1.8rem;
+      }
+
+      .sobre-texto {
+        font-size: 1rem;
+        text-align: left;
+      }
+    }
+
     footer {
       background: var(--roxo);
       color: var(--branco);
@@ -196,12 +242,12 @@ nav a {
       <nav>
         <a href="#hero">Início</a>
         <a href="#benefits">Benefícios</a>
-        <a href="#contato">Contato</a>
+        <a href="#sobre">O que é</a>
       </nav>
     </div>
   </header>
 
-  <section class="hero">
+  <section class="hero" id="hero">
     <div class="hero-text">
       <h1>Transformando <br>ingredientes em<br> inspiração culinária</h1>
       <p>Seu assistente inteligente para criar as melhores receitas saudáveis.</p>
@@ -228,9 +274,39 @@ nav a {
     </div>
   </section>
 
+  <section class="sobre-homecheff" id="sobre">
+    <h2 class="sobre-titulo">O que é o Home Cheff?</h2>
+    <div class="sobre-texto">
+      <p>O Home Cheff é o nosso projeto de faculdade criado com muito carinho pra facilitar o dia a dia de quem quer cozinhar bem, mas sem complicação.</p>
+      <p>A ideia surgiu pensando em como a tecnologia pode deixar a cozinha mais acessível, prática e divertida — principalmente pra quem não tem tanto tempo ou experiência.</p>
+      <p>Com o Home Cheff, a gente quer transformar o momento de cozinhar em algo mais leve e intuitivo, sempre com foco nas necessidades reais do nosso público.</p>
+    </div>
+  </section>
+
   <footer>
     &copy; 2025 Home Cheff. Todos os direitos reservados.
   </footer>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const alvo = document.querySelector(".sobre-homecheff");
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        } else {
+          entry.target.classList.remove("visible"); // remove a classe se sair da tela
+        }
+      });
+    }, {
+      threshold: 0.3
+    });
+
+    if (alvo) observer.observe(alvo);
+  });
+</script>
+
 
 </body>
 </html>
