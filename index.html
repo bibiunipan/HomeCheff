@@ -6,6 +6,7 @@
   <title>Home Cheff</title>
   <meta name="description" content="Descubra receitas saudáveis e fáceis com o assistente inteligente HOMECHEF. Ingredientes acessíveis e passo a passo rápido."/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
   <style>
     :root {
       --roxo: #A020F0;
@@ -35,8 +36,6 @@
       padding: 16px;
       color: var(--branco);
       text-align: center;
-      position: relative;
-      overflow: hidden;
     }
 
     .header-container {
@@ -44,19 +43,15 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      position: relative;
     }
 
     .logo {
       height: 80px;
       margin-bottom: 10px;
-      z-index: 2;
     }
 
     nav {
       margin-top: 10px;
-      z-index: 2;
-      position: relative;
     }
 
     nav a {
@@ -77,33 +72,6 @@
       }
     }
 
-    /* Carrossel */
-    .carousel {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      overflow: hidden;
-    }
-
-    .carousel img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      position: absolute;
-      top: 0;
-      left: 0;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
-
-    .carousel img.active {
-      opacity: 0.4;
-    }
-
-    /* Hero Section */
     .hero {
       display: flex;
       flex-direction: column;
@@ -160,17 +128,25 @@
       margin-right: 8px;
     }
 
-    .hero img {
-      max-width: 520px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      margin-top: 30px;
+    .hero-img {
+      width: 520px;
+      max-width: 100%;
     }
 
-    @media (min-width: 768px) {
-      .hero img {
-        margin-top: 0;
-      }
+    .swiper {
+      width: 100%;
+      height: 100%;
+    }
+
+    .swiper-slide img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    .swiper-button-next, .swiper-button-prev {
+      color: var(--roxo);
     }
 
     .benefits {
@@ -269,12 +245,6 @@
 <body>
 
   <header>
-    <div class="carousel">
-      <img src="cozinha.png" class="active" alt="Banner 1">
-      <img src="banner2.jpg" alt="Banner 2">
-      <img src="banner3.jpg" alt="Banner 3">
-      <img src="banner4.jpg" alt="Banner 4">
-    </div>
     <div class="header-container">
       <img src="logo.png" alt="Logo HomeChef" class="logo" />
       <h1>HOMECHEF</h1>
@@ -292,7 +262,19 @@
       <p>Seu assistente inteligente para criar as melhores receitas saudáveis.</p>
       <a href="#"><i class="fab fa-whatsapp"></i> Experimente agora</a>
     </div>
-    <img src="cozinha.png" alt="Imagem de uma praça com ingredientes separados e balcões de cores branca e roxa" />
+
+    <div class="hero-img">
+      <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide"><img src="cozinha.png" alt="Imagem de cozinha 1" /></div>
+          <div class="swiper-slide"><img src="cozinha2.png" alt="Imagem de cozinha 2" /></div>
+          <div class="swiper-slide"><img src="cozinha3.png" alt="Imagem de cozinha 3" /></div>
+          <div class="swiper-slide"><img src="cozinha4.png" alt="Imagem de cozinha 4" /></div>
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+      </div>
+    </div>
   </section>
 
   <section class="benefits" id="benefits">
@@ -326,37 +308,42 @@
     &copy; 2025 Home Cheff. Todos os direitos reservados.
   </footer>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const alvo = document.querySelector(".sobre-homecheff");
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-        } else {
-          entry.target.classList.remove("visible");
-        }
-      });
-    }, {
-      threshold: 0.3
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const swiper = new Swiper(".mySwiper", {
+      loop: true,
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      effect: "fade",
+      fadeEffect: {
+        crossFade: true
+      }
     });
 
-    if (alvo) observer.observe(alvo);
+    document.addEventListener("DOMContentLoaded", function () {
+      const alvo = document.querySelector(".sobre-homecheff");
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          } else {
+            entry.target.classList.remove("visible");
+          }
+        });
+      }, { threshold: 0.3 });
 
-    // Carrossel automático
-    const imagens = document.querySelectorAll('.carousel img');
-    let current = 0;
-
-    setInterval(() => {
-      imagens[current].classList.remove('active');
-      current = (current + 1) % imagens.length;
-      imagens[current].classList.add('active');
-    }, 4000); // Troca a cada 4 segundos
-  });
-</script>
+      if (alvo) observer.observe(alvo);
+    });
+  </script>
 
 </body>
 </html>
+
 
 
