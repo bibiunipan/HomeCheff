@@ -6,7 +6,6 @@
   <title>Home Cheff</title>
   <meta name="description" content="Descubra receitas saudáveis e fáceis com o assistente inteligente HOMECHEF. Ingredientes acessíveis e passo a passo rápido."/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
   <style>
     :root {
       --roxo: #A020F0;
@@ -33,16 +32,15 @@
 
     header {
       background: var(--roxo);
-      padding: 16px;
+      padding: 0;
       color: var(--branco);
       text-align: center;
+      overflow: hidden;
+      position: relative;
     }
 
     .header-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      padding: 16px;
     }
 
     .logo {
@@ -62,11 +60,27 @@
       font-size: 1rem;
     }
 
-    @media (min-width: 700px) {
-      .header-container {
-        flex-direction: column;
-      }
+    .carousel {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      overflow: hidden;
+    }
 
+    .carousel img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      position: absolute;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .carousel img.active {
+      opacity: 1;
+    }
+
+    @media (min-width: 700px) {
       nav a {
         font-size: 1.1rem;
       }
@@ -128,25 +142,33 @@
       margin-right: 8px;
     }
 
-    .hero-img {
-      width: 520px;
-      max-width: 100%;
-    }
-
-    .swiper {
+    .hero-carousel {
+      max-width: 520px;
       width: 100%;
-      height: 100%;
-    }
-
-    .swiper-slide img {
-      width: 100%;
-      height: auto;
+      overflow: hidden;
+      position: relative;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      margin-top: 30px;
     }
 
-    .swiper-button-next, .swiper-button-prev {
-      color: var(--roxo);
+    .hero-carousel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .hero-carousel img.active {
+      opacity: 1;
+    }
+
+    @media (min-width: 768px) {
+      .hero-carousel {
+        margin-top: 0;
+      }
     }
 
     .benefits {
@@ -244,103 +266,100 @@
 </head>
 <body>
 
-  <header>
-    <div class="header-container">
-      <img src="logo.png" alt="Logo HomeChef" class="logo" />
-      <h1>HOMECHEF</h1>
-      <nav>
-        <a href="#hero">Início</a>
-        <a href="#benefits">Benefícios</a>
-        <a href="#sobre">Sobre</a>
-      </nav>
+<header>
+  <div class="carousel">
+    <img src="cozinha.png" class="active" alt="Cozinha moderna" />
+    <img src="cozinha1.png" alt="Cozinha do Sul" />
+    <img src="cozinha-norte.png" alt="Cozinha do Norte" />
+    <img src="cozinha-nordeste.png" alt="Cozinha do Nordeste" />
+  </div>
+  <div class="header-container">
+    <img src="logo.png" alt="Logo HomeChef" class="logo" />
+    <h1>HOMECHEF</h1>
+    <nav>
+      <a href="#hero">Início</a>
+      <a href="#benefits">Benefícios</a>
+      <a href="#sobre">Sobre</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="hero">
+  <div class="hero-text">
+    <h1>Transformando <br>ingredientes em<br> inspiração culinária</h1>
+    <p>Seu assistente inteligente para criar as melhores receitas saudáveis.</p>
+    <a href="#"><i class="fab fa-whatsapp"></i> Experimente agora</a>
+  </div>
+  <div class="hero-carousel">
+    <img src="cozinha.png" class="active" alt="Cozinha moderna" />
+    <img src="cozinha1.png" alt="Cozinha do Sul" />
+    <img src="cozinha-norte.png" alt="Cozinha do Norte" />
+    <img src="cozinha-nordeste.png" alt="Cozinha do Nordeste" />
+  </div>
+</section>
+
+<section class="benefits" id="benefits">
+  <h2>Benefícios</h2>
+  <div class="cards-container">
+    <div class="card">
+      <h3>Receitas Personalizadas</h3>
+      <p>De acordo com seu tempo, dieta e preferências.</p>
     </div>
-  </header>
-
-  <section class="hero" id="hero">
-    <div class="hero-text">
-      <h1>Transformando <br>ingredientes em<br> inspiração culinária</h1>
-      <p>Seu assistente inteligente para criar as melhores receitas saudáveis.</p>
-      <a href="#"><i class="fab fa-whatsapp"></i> Experimente agora</a>
+    <div class="card">
+      <h3>Substituições Inteligentes</h3>
+      <p>Alternativas saudáveis e econômicas para sua despensa.</p>
     </div>
-
-    <div class="hero-img">
-      <div class="swiper mySwiper">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide"><img src="cozinha.png" alt="Imagem de cozinha 1" /></div>
-          <div class="swiper-slide"><img src="cozinha2.png" alt="Imagem de cozinha 2" /></div>
-          <div class="swiper-slide"><img src="cozinha3.png" alt="Imagem de cozinha 3" /></div>
-          <div class="swiper-slide"><img src="cozinha4.png" alt="Imagem de cozinha 4" /></div>
-        </div>
-        <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div>
-      </div>
+    <div class="card">
+      <h3>Dicas de Cozinha</h3>
+      <p>Melhore suas habilidades culinárias com truques simples.</p>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="benefits" id="benefits">
-    <h2>Benefícios</h2>
-    <div class="cards-container">
-      <div class="card">
-        <h3>Receitas Personalizadas</h3>
-        <p>De acordo com seu tempo, dieta e preferências.</p>
-      </div>
-      <div class="card">
-        <h3>Substituições Inteligentes</h3>
-        <p>Alternativas saudáveis e econômicas para sua despensa.</p>
-      </div>
-      <div class="card">
-        <h3>Dicas de Cozinha</h3>
-        <p>Melhore suas habilidades culinárias com truques simples.</p>
-      </div>
-    </div>
-  </section>
+<section class="sobre-homecheff" id="sobre">
+  <h2 class="sobre-titulo">O que é o Home Cheff?</h2>
+  <div class="sobre-texto">
+    <p>O Home Cheff é o nosso projeto de faculdade criado com muito carinho pra facilitar o dia a dia de quem quer cozinhar bem, mas sem complicação.</p>
+    <p>A ideia surgiu pensando em como a tecnologia pode deixar a cozinha mais acessível, prática e divertida — principalmente pra quem não tem tanto tempo ou experiência.</p>
+    <p>Com o Home Cheff, a gente quer transformar o momento de cozinhar em algo mais leve e intuitivo, sempre com foco nas necessidades reais do nosso público.</p>
+  </div>
+</section>
 
-  <section class="sobre-homecheff" id="sobre">
-    <h2 class="sobre-titulo">O que é o Home Cheff?</h2>
-    <div class="sobre-texto">
-      <p>O Home Cheff é o nosso projeto de faculdade criado com muito carinho pra facilitar o dia a dia de quem quer cozinhar bem, mas sem complicação.</p>
-      <p>A ideia surgiu pensando em como a tecnologia pode deixar a cozinha mais acessível, prática e divertida — principalmente pra quem não tem tanto tempo ou experiência.</p>
-      <p>Com o Home Cheff, a gente quer transformar o momento de cozinhar em algo mais leve e intuitivo, sempre com foco nas necessidades reais do nosso público.</p>
-    </div>
-  </section>
+<footer>
+  &copy; 2025 Home Cheff. Todos os direitos reservados.
+</footer>
 
-  <footer>
-    &copy; 2025 Home Cheff. Todos os direitos reservados.
-  </footer>
+<script>
+  function initCarousel(selector) {
+    const carousel = document.querySelector(selector);
+    const images = carousel.querySelectorAll('img');
+    let current = 0;
 
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
-    const swiper = new Swiper(".mySwiper", {
-      loop: true,
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-      autoplay: {
-        delay: 3000,
-        disableOnInteraction: false,
-      },
-      effect: "fade",
-      fadeEffect: {
-        crossFade: true
-      }
-    });
+    setInterval(() => {
+      images[current].classList.remove('active');
+      current = (current + 1) % images.length;
+      images[current].classList.add('active');
+    }, 3000);
+  }
 
-    document.addEventListener("DOMContentLoaded", function () {
-      const alvo = document.querySelector(".sobre-homecheff");
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          } else {
-            entry.target.classList.remove("visible");
-          }
-        });
-      }, { threshold: 0.3 });
+  document.addEventListener("DOMContentLoaded", function() {
+    initCarousel('.carousel');
+    initCarousel('.hero-carousel');
 
-      if (alvo) observer.observe(alvo);
-    });
-  </script>
+    const alvo = document.querySelector(".sobre-homecheff");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        } else {
+          entry.target.classList.remove("visible");
+        }
+      });
+    }, { threshold: 0.3 });
+
+    if (alvo) observer.observe(alvo);
+  });
+</script>
 
 </body>
 </html>
