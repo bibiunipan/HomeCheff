@@ -35,6 +35,8 @@
       padding: 16px;
       color: var(--branco);
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
     .header-container {
@@ -42,15 +44,19 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
 
     .logo {
       height: 80px;
       margin-bottom: 10px;
+      z-index: 2;
     }
 
     nav {
       margin-top: 10px;
+      z-index: 2;
+      position: relative;
     }
 
     nav a {
@@ -71,6 +77,33 @@
       }
     }
 
+    /* Carrossel */
+    .carousel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .carousel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .carousel img.active {
+      opacity: 0.4;
+    }
+
+    /* Hero Section */
     .hero {
       display: flex;
       flex-direction: column;
@@ -236,6 +269,12 @@
 <body>
 
   <header>
+    <div class="carousel">
+      <img src="banner1.jpg" class="active" alt="Banner 1">
+      <img src="banner2.jpg" alt="Banner 2">
+      <img src="banner3.jpg" alt="Banner 3">
+      <img src="banner4.jpg" alt="Banner 4">
+    </div>
     <div class="header-container">
       <img src="logo.png" alt="Logo HomeChef" class="logo" />
       <h1>HOMECHEF</h1>
@@ -296,7 +335,7 @@
         if (entry.isIntersecting) {
           entry.target.classList.add("visible");
         } else {
-          entry.target.classList.remove("visible"); // remove a classe se sair da tela
+          entry.target.classList.remove("visible");
         }
       });
     }, {
@@ -304,10 +343,20 @@
     });
 
     if (alvo) observer.observe(alvo);
+
+    // Carrossel automático
+    const imagens = document.querySelectorAll('.carousel img');
+    let current = 0;
+
+    setInterval(() => {
+      imagens[current].classList.remove('active');
+      current = (current + 1) % imagens.length;
+      imagens[current].classList.add('active');
+    }, 4000); // Troca a cada 4 segundos
   });
 </script>
 
-
 </body>
 </html>
+
 
