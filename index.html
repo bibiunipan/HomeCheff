@@ -111,6 +111,7 @@
       padding: 60px 20px;
       background: var(--branco);
       text-align: center;
+      position: relative;
     }
 
     @media (min-width: 768px) {
@@ -167,10 +168,52 @@
       margin-top: 30px;
     }
 
-    @media (min-width: 768px) {
-      .hero img {
-        margin-top: 0;
-      }
+    .hero-carousel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .hero-carousel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .hero-carousel img.active {
+      opacity: 1;
+    }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+    }
+
+    .carousel-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #fff;
+      opacity: 0.5;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .carousel-dot.active {
+      opacity: 1;
     }
 
     .benefits {
@@ -292,7 +335,20 @@
       <p>Seu assistente inteligente para criar as melhores receitas saudáveis.</p>
       <a href="#"><i class="fab fa-whatsapp"></i> Experimente agora</a>
     </div>
-    <img src="cozinha.png" alt="Imagem de uma praça com ingredientes separados e balcões de cores branca e roxa" />
+    
+    <div class="hero-carousel">
+      <img src="cozinha.png" class="active" alt="Imagem 1">
+      <img src="cozinha1.png" alt="Imagem 2">
+      <img src="cozinha2.png" alt="Imagem 3">
+      <img src="banner4.jpg" alt="Imagem 4">
+    </div>
+
+    <div class="carousel-dots">
+      <div class="carousel-dot active"></div>
+      <div class="carousel-dot"></div>
+      <div class="carousel-dot"></div>
+      <div class="carousel-dot"></div>
+    </div>
   </section>
 
   <section class="benefits" id="benefits">
@@ -344,7 +400,7 @@
 
     if (alvo) observer.observe(alvo);
 
-    // Carrossel automático
+    // Carrossel do Header
     const imagens = document.querySelectorAll('.carousel img');
     let current = 0;
 
@@ -353,12 +409,21 @@
       current = (current + 1) % imagens.length;
       imagens[current].classList.add('active');
     }, 4000); // Troca a cada 4 segundos
+
+    // Carrossel do Hero
+    const heroImagens = document.querySelectorAll('.hero-carousel img');
+    const dots = document.querySelectorAll('.carousel-dot');
+    let heroCurrent = 0;
+
+    setInterval(() => {
+      heroImagens[heroCurrent].classList.remove('active');
+      dots[heroCurrent].classList.remove('active');
+      heroCurrent = (heroCurrent + 1) % heroImagens.length;
+      heroImagens[heroCurrent].classList.add('active');
+      dots[heroCurrent].classList.add('active');
+    }, 4000); // Troca a cada 4 segundos
   });
 </script>
 
 </body>
 </html>
-
-
-
-
