@@ -45,18 +45,16 @@
       align-items: center;
       justify-content: center;
       position: relative;
+      z-index: 2;
     }
 
     .logo {
       height: 80px;
       margin-bottom: 10px;
-      z-index: 2;
     }
 
     nav {
       margin-top: 10px;
-      z-index: 2;
-      position: relative;
     }
 
     nav a {
@@ -67,18 +65,8 @@
       font-size: 1rem;
     }
 
-    @media (min-width: 700px) {
-      .header-container {
-        flex-direction: column;
-      }
-
-      nav a {
-        font-size: 1.1rem;
-      }
-    }
-
-    /* Carrossel */
-    .carousel {
+    /* Carrossel no Header */
+    .header-carousel {
       position: absolute;
       top: 0;
       left: 0;
@@ -88,7 +76,7 @@
       overflow: hidden;
     }
 
-    .carousel img {
+    .header-carousel img {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -99,7 +87,7 @@
       transition: opacity 1s ease-in-out;
     }
 
-    .carousel img.active {
+    .header-carousel img.active {
       opacity: 0.4;
     }
 
@@ -111,6 +99,7 @@
       padding: 60px 20px;
       background: var(--branco);
       text-align: center;
+      position: relative;
     }
 
     @media (min-width: 768px) {
@@ -160,11 +149,46 @@
       margin-right: 8px;
     }
 
-    .hero img {
+    .hero-image-container {
+      position: relative;
       max-width: 520px;
+    }
+
+    .hero-image-container img {
+      width: 100%;
+      height: auto;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      margin-top: 30px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .hero-image-container img.active {
+      opacity: 1;
+      position: relative;
+    }
+
+    .hero-dots {
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .hero-dots span {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin: 0 5px;
+      background: #ccc;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .hero-dots span.active {
+      background: var(--roxo);
     }
 
     @media (min-width: 768px) {
@@ -268,63 +292,71 @@
 </head>
 <body>
 
-  <header>
-    <div class="carousel">
-      <img src="cozinha.png" class="active" alt="Banner 1">
-      <img src="cozinha1.png" alt="Banner 2">
-      <img src="banner2.jpg" alt="Banner 3">
-      <img src="banner4.jpg" alt="Banner 4">
-    </div>
-    <div class="header-container">
-      <img src="logo.png" alt="Logo HomeChef" class="logo" />
-      <h1>HOMECHEF</h1>
-      <nav>
-        <a href="#hero">Início</a>
-        <a href="#benefits">Benefícios</a>
-        <a href="#sobre">Sobre</a>
-      </nav>
-    </div>
-  </header>
+<header>
+  <div class="header-carousel">
+    <img src="cozinha.png" class="active" alt="Imagem 1">
+    <img src="cozinha1.png" alt="Imagem 2">
+    <img src="cozinha2.jpg" alt="Imagem 3">
+    <img src="banner4.jpg" alt="Imagem 4">
+  </div>
 
-  <section class="hero" id="hero">
-    <div class="hero-text">
-      <h1>Transformando <br>ingredientes em<br> inspiração culinária</h1>
-      <p>Seu assistente inteligente para criar as melhores receitas saudáveis.</p>
-      <a href="#"><i class="fab fa-whatsapp"></i> Experimente agora</a>
-    </div>
-    <img src="cozinha.png" alt="Imagem de uma praça com ingredientes separados e balcões de cores branca e roxa" />
-  </section>
+  <div class="header-container">
+    <img src="logo.png" alt="Logo HomeChef" class="logo" />
+    <h1>HOMECHEF</h1>
+    <nav>
+      <a href="#hero">Início</a>
+      <a href="#benefits">Benefícios</a>
+      <a href="#sobre">Sobre</a>
+    </nav>
+  </div>
+</header>
 
-  <section class="benefits" id="benefits">
-    <h2>Benefícios</h2>
-    <div class="cards-container">
-      <div class="card">
-        <h3>Receitas Personalizadas</h3>
-        <p>De acordo com seu tempo, dieta e preferências.</p>
-      </div>
-      <div class="card">
-        <h3>Substituições Inteligentes</h3>
-        <p>Alternativas saudáveis e econômicas para sua despensa.</p>
-      </div>
-      <div class="card">
-        <h3>Dicas de Cozinha</h3>
-        <p>Melhore suas habilidades culinárias com truques simples.</p>
-      </div>
-    </div>
-  </section>
+<section class="hero" id="hero">
+  <div class="hero-text">
+    <h1>Transformando <br>ingredientes em<br> inspiração culinária</h1>
+    <p>Seu assistente inteligente para criar as melhores receitas saudáveis.</p>
+    <a href="#"><i class="fab fa-whatsapp"></i> Experimente agora</a>
+  </div>
+  <div class="hero-image-container">
+    <img src="cozinha.png" class="active" alt="Imagem Hero 1" />
+    <img src="cozinha1.png" alt="Imagem Hero 2" />
+    <img src="cozinha2.jpg" alt="Imagem Hero 3" />
+    <img src="banner4.jpg" alt="Imagem Hero 4" />
+  </div>
+</section>
 
-  <section class="sobre-homecheff" id="sobre">
-    <h2 class="sobre-titulo">O que é o Home Cheff?</h2>
-    <div class="sobre-texto">
-      <p>O Home Cheff é o nosso projeto de faculdade criado com muito carinho pra facilitar o dia a dia de quem quer cozinhar bem, mas sem complicação.</p>
-      <p>A ideia surgiu pensando em como a tecnologia pode deixar a cozinha mais acessível, prática e divertida — principalmente pra quem não tem tanto tempo ou experiência.</p>
-      <p>Com o Home Cheff, a gente quer transformar o momento de cozinhar em algo mais leve e intuitivo, sempre com foco nas necessidades reais do nosso público.</p>
-    </div>
-  </section>
+<div class="hero-dots" id="heroDots"></div>
 
-  <footer>
-    &copy; 2025 Home Cheff. Todos os direitos reservados.
-  </footer>
+<section class="benefits" id="benefits">
+  <h2>Benefícios</h2>
+  <div class="cards-container">
+    <div class="card">
+      <h3>Receitas Personalizadas</h3>
+      <p>De acordo com seu tempo, dieta e preferências.</p>
+    </div>
+    <div class="card">
+      <h3>Substituições Inteligentes</h3>
+      <p>Alternativas saudáveis e econômicas para sua despensa.</p>
+    </div>
+    <div class="card">
+      <h3>Dicas de Cozinha</h3>
+      <p>Melhore suas habilidades culinárias com truques simples.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sobre-homecheff" id="sobre">
+  <h2 class="sobre-titulo">O que é o Home Cheff?</h2>
+  <div class="sobre-texto">
+    <p>O Home Cheff é o nosso projeto de faculdade criado com muito carinho pra facilitar o dia a dia de quem quer cozinhar bem, mas sem complicação.</p>
+    <p>A ideia surgiu pensando em como a tecnologia pode deixar a cozinha mais acessível, prática e divertida — principalmente pra quem não tem tanto tempo ou experiência.</p>
+    <p>Com o Home Cheff, a gente quer transformar o momento de cozinhar em algo mais leve e intuitivo, sempre com foco nas necessidades reais do nosso público.</p>
+  </div>
+</section>
+
+<footer>
+  &copy; 2025 Home Cheff. Todos os direitos reservados.
+</footer>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -344,17 +376,48 @@
 
     if (alvo) observer.observe(alvo);
 
-    // Carrossel automático
-    const imagens = document.querySelectorAll('.carousel img');
-    let current = 0;
+    // Carrossel do header
+    const imagensHeader = document.querySelectorAll('.header-carousel img');
+    let currentHeader = 0;
+    setInterval(() => {
+      imagensHeader[currentHeader].classList.remove('active');
+      currentHeader = (currentHeader + 1) % imagensHeader.length;
+      imagensHeader[currentHeader].classList.add('active');
+    }, 4000);
+
+    // Carrossel do Hero
+    const heroImages = document.querySelectorAll('.hero-image-container img');
+    const heroDots = document.getElementById('heroDots');
+    let currentHero = 0;
+
+    heroImages.forEach((_, index) => {
+      const dot = document.createElement('span');
+      dot.addEventListener('click', () => {
+        heroImages[currentHero].classList.remove('active');
+        heroDots.children[currentHero].classList.remove('active');
+        currentHero = index;
+        heroImages[currentHero].classList.add('active');
+        heroDots.children[currentHero].classList.add('active');
+      });
+      heroDots.appendChild(dot);
+    });
+
+    heroDots.children[0].classList.add('active');
 
     setInterval(() => {
-      imagens[current].classList.remove('active');
-      current = (current + 1) % imagens.length;
-      imagens[current].classList.add('active');
-    }, 4000); // Troca a cada 4 segundos
+      heroImages[currentHero].classList.remove('active');
+      heroDots.children[currentHero].classList.remove('active');
+      currentHero = (currentHero + 1) % heroImages.length;
+      heroImages[currentHero].classList.add('active');
+      heroDots.children[currentHero].classList.add('active');
+    }, 4000);
+
   });
 </script>
+
+</body>
+</html>
+
 
 </body>
 </html>
