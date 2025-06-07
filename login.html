@@ -49,7 +49,6 @@
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 1rem;
-      box-sizing: border-box;
     }
 
     button {
@@ -63,11 +62,11 @@
       cursor: pointer;
       transition: background 0.3s ease, box-shadow 0.3s ease;
       font-size: 1rem;
-      box-sizing: border-box;
     }
 
     button:hover {
       background: var(--lilas);
+      box-shadow: 0 4px 12px rgba(154, 128, 215, 0.6);
     }
 
     .toggle {
@@ -98,39 +97,49 @@
       display: none;
     }
 
-    /* NOVO: container dos botões de escolha */
-    .choice-group {
-      display: flex;
-      gap: 12px;
+    /* Estilo dos botões das restrições */
+    .restricoes-group {
       margin-bottom: 16px;
-      justify-content: center;
+      text-align: left;
     }
 
-    .choice-button {
-      flex: 1; /* para todos terem a mesma largura e preencher o container */
-      padding: 12px;
-      background: var(--branco);
+    .restricoes-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
       color: var(--roxo);
+      font-size: 1rem;
+    }
+
+    .restricoes-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .restricao-btn {
+      flex: 1 1 30%;
+      min-width: 100px;
+      padding: 12px 10px;
       border: 2px solid var(--roxo);
       border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
-      user-select: none;
+      background-color: var(--branco);
+      color: var(--roxo);
+      font-weight: 600;
       font-size: 1rem;
-      box-sizing: border-box;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+      text-align: center;
     }
 
-    .choice-button:hover,
-    .choice-button:focus {
-      background: var(--roxo);
+    .restricao-btn:hover {
+      background-color: var(--lilas);
       color: var(--branco);
-      box-shadow: 0 4px 12px rgba(108, 74, 182, 0.6);
-      outline: none;
     }
 
-    .choice-button.active {
-      background: var(--roxo);
+    .restricao-btn.active {
+      background-color: var(--roxo);
       color: var(--branco);
       box-shadow: 0 4px 12px rgba(108, 74, 182, 0.6);
     }
@@ -146,14 +155,6 @@
       <div id="login-error" class="error"></div>
       <input type="email" id="login-email" placeholder="E-mail" required />
       <input type="password" id="login-password" placeholder="Senha" required />
-
-      <!-- Botões para escolher, exemplo: tipo de usuário -->
-      <div class="choice-group" id="login-choice-group">
-        <button type="button" class="choice-button" data-value="cliente">Cliente</button>
-        <button type="button" class="choice-button" data-value="cozinheiro">Cozinheiro</button>
-        <button type="button" class="choice-button" data-value="entregador">Entregador</button>
-      </div>
-
       <button id="login-btn">Entrar</button>
       <div class="toggle">
         Ainda não tem conta? <a id="show-signup">Cadastre-se</a>
@@ -168,11 +169,16 @@
       <input type="email" id="signup-email" placeholder="E-mail" required />
       <input type="password" id="signup-password" placeholder="Senha" required />
 
-      <!-- Botões para escolher, exemplo: tipo de usuário -->
-      <div class="choice-group" id="signup-choice-group">
-        <button type="button" class="choice-button" data-value="cliente">Cliente</button>
-        <button type="button" class="choice-button" data-value="cozinheiro">Cozinheiro</button>
-        <button type="button" class="choice-button" data-value="entregador">Entregador</button>
+      <div class="restricoes-group">
+        <label>Restrições alimentares:</label>
+        <div class="restricoes-buttons">
+          <button type="button" class="restricao-btn" data-value="gluten">Glúten</button>
+          <button type="button" class="restricao-btn" data-value="lactose">Lactose</button>
+          <button type="button" class="restricao-btn" data-value="frutos_do_mar">Frutos do mar</button>
+          <button type="button" class="restricao-btn" data-value="ovos">Ovos</button>
+          <button type="button" class="restricao-btn" data-value="nozes">Nozes</button>
+          <button type="button" class="restricao-btn" data-value="soja">Soja</button>
+        </div>
       </div>
 
       <button id="signup-btn">Cadastrar</button>
@@ -195,6 +201,23 @@
     const signupError = document.getElementById('signup-error');
     const signupSuccess = document.getElementById('signup-success');
 
+    // Controle das restrições selecionadas
+    const restricaoButtons = document.querySelectorAll('.restricao-btn');
+    const restricoesSelecionadas = new Set();
+
+    restricaoButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const valor = button.dataset.value;
+        if (restricoesSelecionadas.has(valor)) {
+          restricoesSelecionadas.delete(valor);
+          button.classList.remove('active');
+        } else {
+          restricoesSelecionadas.add(valor);
+          button.classList.add('active');
+        }
+      });
+    });
+
     // Mostrar formulário de cadastro
     document.getElementById('show-signup').addEventListener('click', () => {
       loginForm.classList.add('hidden');
@@ -215,56 +238,24 @@
       signupSuccess.textContent = '';
     });
 
-    // Função para marcar botão ativo e guardar valor
-    function setupChoiceGroup(containerId) {
-      const container = document.getElementById(containerId);
-      const buttons = container.querySelectorAll('.choice-button');
-      let selectedValue = null;
-
-      buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          // Remove active de todos
-          buttons.forEach(b => b.classList.remove('active'));
-          // Marca o clicado
-          btn.classList.add('active');
-          selectedValue = btn.dataset.value;
-        });
-      });
-
-      // Retorna função para pegar valor selecionado
-      return () => selectedValue;
-    }
-
-    const getLoginChoice = setupChoiceGroup('login-choice-group');
-    const getSignupChoice = setupChoiceGroup('signup-choice-group');
-
     // Função para login
     document.getElementById('login-btn').addEventListener('click', async () => {
       loginError.textContent = '';
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value.trim();
-      const tipoUsuario = getLoginChoice();
 
       if (!email || !password) {
         loginError.textContent = 'Preencha todos os campos.';
         return;
       }
 
-      if (!tipoUsuario) {
-        loginError.textContent = 'Selecione o tipo de usuário.';
-        return;
-      }
-
-      // Aqui você pode usar o tipoUsuario para alguma lógica, por enquanto só log:
-      console.log('Tipo de usuário selecionado no login:', tipoUsuario);
-
-      const { error, data } = await supabaseClient.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
       if (error) {
-        loginError.textContent = error.message;
+        loginError.textContent = 'Erro: ' + error.message;
       } else {
-        // Login com sucesso, redireciona
-        window.location.href = 'index.html';
+        alert('Login realizado com sucesso!');
+        // Redirecionar ou atualizar a página, etc.
       }
     });
 
@@ -275,26 +266,31 @@
 
       const email = document.getElementById('signup-email').value.trim();
       const password = document.getElementById('signup-password').value.trim();
-      const tipoUsuario = getSignupChoice();
 
       if (!email || !password) {
         signupError.textContent = 'Preencha todos os campos.';
         return;
       }
 
-      if (!tipoUsuario) {
-        signupError.textContent = 'Selecione o tipo de usuário.';
-        return;
-      }
+      const restricoesArray = Array.from(restricoesSelecionadas);
+      console.log('Restrições selecionadas no cadastro:', restricoesArray);
 
-      console.log('Tipo de usuário selecionado no cadastro:', tipoUsuario);
-
-      const { error, data } = await supabaseClient.auth.signUp({ email, password });
+      // Cadastro no Supabase
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+      }, {
+        data: { restricoes: restricoesArray }
+      });
 
       if (error) {
-        signupError.textContent = error.message;
+        signupError.textContent = 'Erro: ' + error.message;
       } else {
-        signupSuccess.textContent = 'Cadastro realizado! Verifique seu e-mail para confirmar.';
+        signupSuccess.textContent = 'Cadastro realizado com sucesso! Verifique seu e-mail para confirmar.';
+        localStorage.setItem('userEmail', data.user.email);
+        window.location.href = 'formulario.html';  // redireciona para o formulário
+        }
+
       }
     });
   </script>
