@@ -6,7 +6,114 @@
   <title>Home Cheff - Login / Cadastro</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
-    /* ...seu CSS permanece igual... */
+    :root {
+      --roxo: #6c4ab6;
+      --lilas: #9a80d7;
+      --branco: #fff;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--branco);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: var(--branco);
+      padding: 32px;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(108, 74, 182, 0.2);
+      text-align: center;
+    }
+
+    .logo {
+      max-width: 150px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      color: var(--roxo);
+      margin-bottom: 24px;
+    }
+
+    input, button, .restricao-btn {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    button {
+      background: var(--roxo);
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background: var(--lilas);
+    }
+
+    .toggle {
+      margin-top: 16px;
+      font-size: 0.9rem;
+    }
+
+    .toggle a {
+      color: var(--roxo);
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .error, .success {
+      min-height: 20px;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+
+    .error { color: red; }
+    .success { color: green; }
+    .hidden { display: none; }
+
+    .restricoes-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--roxo);
+    }
+
+    .restricoes-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .restricao-btn {
+      background-color: var(--branco);
+      border: 2px solid var(--roxo);
+      color: var(--roxo);
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .restricao-btn.active {
+      background-color: var(--roxo);
+      color: var(--branco);
+    }
   </style>
 </head>
 <body>
@@ -100,21 +207,7 @@
       if (error) {
         document.getElementById('login-error').textContent = error.message;
       } else {
-        // BUSCA o nome do usuário na tabela 'usuarios' usando o email
-        const { data: userData, error: userError } = await supabaseClient
-          .from('usuarios')
-          .select('nome')
-          .eq('email', email)
-          .single();
-
-        if (userError) {
-          document.getElementById('login-error').textContent = userError.message;
-        } else {
-          // Salva o nome no localStorage
-          localStorage.setItem('userName', userData.nome);
-          // Redireciona após salvar o nome
-          window.location.href = 'formulario.html';
-        }
+        window.location.href = 'formulario.html'; // Redireciona após login
       }
     });
 
@@ -125,6 +218,7 @@
       const restricoes = [...restricoesSelecionadas];
       if (restricoes.includes('nenhuma')) restricoes.length = 0;
 
+      // Criar usuário no Supabase Auth
       const { data, error } = await supabaseClient.auth.signUp({ email, password });
 
       if (error) {
@@ -132,7 +226,10 @@
         return;
       }
 
+      // Pega o id do usuário criado
       const userId = data.user?.id;
+
+      // Salva os dados extras na tabela 'usuarios'
       const { error: insertError } = await supabaseClient.from('usuarios').insert([{
         id: userId,
         email,
@@ -143,9 +240,6 @@
       if (insertError) {
         document.getElementById('signup-error').textContent = insertError.message;
       } else {
-        // Salva o nome no localStorage após cadastro
-        localStorage.setItem('userName', nome);
-
         document.getElementById('signup-success').textContent = 'Cadastro realizado com sucesso! Faça login.';
         signupForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
