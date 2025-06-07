@@ -42,30 +42,49 @@
       margin-bottom: 24px;
     }
 
-    input {
+    input,
+    select {
       width: 100%;
       padding: 12px;
       margin-bottom: 16px;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      border: 2px solid var(--roxo);
       font-size: 1rem;
+      background: var(--branco);
+      color: #333;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    input:focus,
+    select:focus,
+    input:hover,
+    select:hover {
+      background: var(--roxo);
+      color: var(--branco);
+      box-shadow: 0 0 8px var(--roxo);
+      outline: none;
     }
 
     button {
       width: 100%;
       padding: 12px;
-      background: var(--roxo);
-      color: white;
-      border: none;
+      background: var(--branco);
+      color: var(--roxo);
+      border: 2px solid var(--roxo);
       border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
       font-size: 1rem;
     }
 
-    button:hover {
-      background: var(--lilas);
+    button:hover,
+    button:focus {
+      background: var(--roxo);
+      color: var(--branco);
+      box-shadow: 0 0 8px var(--roxo);
+      outline: none;
     }
 
     .toggle {
@@ -120,6 +139,17 @@
       <div id="signup-success" class="success"></div>
       <input type="email" id="signup-email" placeholder="E-mail" required />
       <input type="password" id="signup-password" placeholder="Senha" required />
+      
+      <!-- Select restrição alimentar -->
+      <select id="signup-dietary" required>
+        <option value="" disabled selected>Selecione sua restrição alimentar</option>
+        <option value="nenhuma">Nenhuma</option>
+        <option value="vegetariana">Vegetariana</option>
+        <option value="vegana">Vegana</option>
+        <option value="gluten">Sem glúten</option>
+        <option value="lactose">Sem lactose</option>
+      </select>
+
       <button id="signup-btn">Cadastrar</button>
       <div class="toggle">
         Já tem conta? <a id="show-login">Entrar</a>
@@ -183,25 +213,27 @@
 
     // Função para cadastro
     document.getElementById('signup-btn').addEventListener('click', async () => {
-  signupError.textContent = '';
-  signupSuccess.textContent = '';
+      signupError.textContent = '';
+      signupSuccess.textContent = '';
 
-  const email = document.getElementById('signup-email').value.trim();
-  const password = document.getElementById('signup-password').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value.trim();
+      const dietary = document.getElementById('signup-dietary').value;
 
-  if (!email || !password) {
-    signupError.textContent = 'Preencha todos os campos.';
-    return;
-  }
+      if (!email || !password || !dietary) {
+        signupError.textContent = 'Preencha todos os campos.';
+        return;
+      }
 
-  const { error, data } = await supabaseClient.auth.signUp({ email, password });
+      const { error, data } = await supabaseClient.auth.signUp({ email, password });
 
-  if (error) {
-    signupError.textContent = error.message;
-  } else {
-    signupSuccess.textContent = 'Cadastro realizado! Verifique seu e-mail para confirmar.';
-  }
-});
+      if (error) {
+        signupError.textContent = error.message;
+      } else {
+        // Aqui você pode salvar dietary na tabela profiles, por exemplo (não está implementado neste snippet)
+        signupSuccess.textContent = 'Cadastro realizado! Verifique seu e-mail para confirmar.';
+      }
+    });
   </script>
 </body>
 </html>
