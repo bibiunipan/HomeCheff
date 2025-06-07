@@ -37,15 +37,17 @@
     }
 
     .logo-container {
-      height: 80px;
+      height: 100px;
       background: var(--roxo);
       display: flex;
       justify-content: center;
       align-items: center;
-      color: var(--branco);
-      font-weight: bold;
-      font-size: 1.8rem;
-      letter-spacing: 1px;
+    }
+
+    .logo-container img {
+      max-height: 80%;
+      max-width: 90%;
+      object-fit: contain;
     }
 
     .welcome-msg {
@@ -173,8 +175,7 @@
 <body>
   <div class="container">
     <div class="logo-container">
-      Home Cheff
-     <img src="logotipo.png" alt="Home Cheff" />
+      <img src="logotipo.png" alt="Logo Home Cheff" />
     </div>
     <div class="welcome-msg">Bem-vindo ao Home Cheff!</div>
     <div class="chat-area" id="chatArea"></div>
