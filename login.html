@@ -135,6 +135,7 @@
       <h2>Cadastrar</h2>
       <div id="signup-error" class="error"></div>
       <div id="signup-success" class="success"></div>
+      <input type="text" id="signup-nome" placeholder="Nome completo" required />
       <input type="email" id="signup-email" placeholder="E-mail" required />
       <input type="password" id="signup-password" placeholder="Senha" required />
 
@@ -202,7 +203,7 @@
       const email = document.getElementById('login-email').value;
       const password = document.getElementById('login-password').value;
 
-      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) {
         document.getElementById('login-error').textContent = error.message;
       } else {
@@ -211,23 +212,33 @@
     });
 
     document.getElementById('signup-btn').addEventListener('click', async () => {
+      const nome = document.getElementById('signup-nome').value;
       const email = document.getElementById('signup-email').value;
       const password = document.getElementById('signup-password').value;
       const restricoes = [...restricoesSelecionadas];
       if (restricoes.includes('nenhuma')) restricoes.length = 0;
 
-      const { error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: { data: { restricoes } }
-      });
+      const { data, error } = await supabaseClient.auth.signUp({ email, password });
 
       if (error) {
         document.getElementById('signup-error').textContent = error.message;
+        return;
+      }
+
+      const userId = data.user?.id;
+      const { error: insertError } = await supabaseClient.from('usuarios').insert([{
+        id: userId,
+        email,
+        nome,
+        restricoes
+      }]);
+
+      if (insertError) {
+        document.getElementById('signup-error').textContent = insertError.message;
       } else {
+        document.getElementById('signup-success').textContent = 'Cadastro realizado com sucesso! Faça login.';
         signupForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
-        document.getElementById('signup-success').textContent = 'Cadastro realizado com sucesso! Faça login.';
       }
     });
   </script>
