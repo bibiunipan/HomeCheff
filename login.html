@@ -42,22 +42,16 @@
       margin-bottom: 24px;
     }
 
-    input, button.restricao-btn {
+    input, button, .restricao-btn {
       width: 100%;
       min-height: 44px;
-      padding: 10px 12px;
+      padding: 10px;
       margin-bottom: 16px;
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 1rem;
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      cursor: pointer;
-      transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
-    }
-
-    input {
-      border: 1px solid #ccc;
+      font-family: inherit;
     }
 
     button {
@@ -65,11 +59,12 @@
       color: white;
       border: none;
       font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
     }
 
     button:hover {
       background: var(--lilas);
-      box-shadow: 0 4px 12px rgba(154, 128, 215, 0.6);
     }
 
     .toggle {
@@ -82,65 +77,42 @@
       cursor: pointer;
       font-weight: bold;
       text-decoration: none;
-      user-select: none;
     }
 
-    .error {
-      color: red;
-      margin-bottom: 10px;
+    .error, .success {
       min-height: 20px;
-    }
-
-    .success {
-      color: green;
       margin-bottom: 10px;
-      min-height: 20px;
+      font-size: 0.9rem;
     }
 
-    .hidden {
-      display: none;
-    }
-
-    /* Estilo dos botões das restrições */
-    .restricoes-group {
-      margin-bottom: 16px;
-      text-align: left;
-    }
+    .error { color: red; }
+    .success { color: green; }
+    .hidden { display: none; }
 
     .restricoes-group label {
       display: block;
       margin-bottom: 8px;
       font-weight: bold;
       color: var(--roxo);
-      font-size: 1rem;
     }
 
     .restricoes-buttons {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
     }
 
-    button.restricao-btn {
-      border: 2px solid var(--roxo);
+    .restricao-btn {
       background-color: var(--branco);
+      border: 2px solid var(--roxo);
       color: var(--roxo);
-      font-weight: 600;
-      user-select: none;
-      text-align: center;
-      box-sizing: border-box;
-      padding: 10px 0;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    button.restricao-btn:hover {
-      background-color: var(--lilas);
-      color: var(--branco);
-    }
-
-    button.restricao-btn.active {
+    .restricao-btn.active {
       background-color: var(--roxo);
       color: var(--branco);
-      box-shadow: 0 4px 12px rgba(108, 74, 182, 0.6);
     }
   </style>
 </head>
@@ -148,19 +120,17 @@
   <div class="container">
     <img src="logo2.png" alt="Logo Home Cheff" class="logo" />
 
-    <!-- Formulário Login -->
+    <!-- Login -->
     <div id="login-form">
       <h2>Entrar</h2>
       <div id="login-error" class="error"></div>
       <input type="email" id="login-email" placeholder="E-mail" required />
       <input type="password" id="login-password" placeholder="Senha" required />
       <button id="login-btn">Entrar</button>
-      <div class="toggle">
-        Ainda não tem conta? <a id="show-signup">Cadastre-se</a>
-      </div>
+      <div class="toggle">Ainda não tem conta? <a id="show-signup">Cadastre-se</a></div>
     </div>
 
-    <!-- Formulário Cadastro -->
+    <!-- Cadastro -->
     <div id="signup-form" class="hidden">
       <h2>Cadastrar</h2>
       <div id="signup-error" class="error"></div>
@@ -172,52 +142,40 @@
         <label>Restrições alimentares:</label>
         <div class="restricoes-buttons">
           <button type="button" class="restricao-btn" data-value="gluten">Glúten</button>
-          <button type="button" class="restricao-btn" data-value="vegana">Vegana</button>
           <button type="button" class="restricao-btn" data-value="lactose">Lactose</button>
-          <button type="button" class="restricao-btn" data-value="afins">Afins</button>
+          <button type="button" class="restricao-btn" data-value="vegana">Vegana</button>
+          <button type="button" class="restricao-btn" data-value="vegetariana">Vegetariana</button>
           <button type="button" class="restricao-btn" data-value="nenhuma">Nenhuma</button>
         </div>
       </div>
 
       <button id="signup-btn">Cadastrar</button>
-      <div class="toggle">
-        Já tem conta? <a id="show-login">Entrar</a>
-      </div>
+      <div class="toggle">Já tem conta? <a id="show-login">Entrar</a></div>
     </div>
   </div>
 
   <script>
     const supabaseClient = supabase.createClient(
       'https://ytztgkuzvdmlnbzelmct.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0enRna3V6dmRtbG5iemVsbWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwODAyODEsImV4cCI6MjA2NDY1NjI4MX0.UFLTaoKbkenLhL_xu8Zdi3Zv73qR0t9M-KE_Jym4r3k'
+      'SUA_CHAVE_PUBLICA_DO_SUPABASE'
     );
 
     const loginForm = document.getElementById('login-form');
     const signupForm = document.getElementById('signup-form');
-
-    const loginError = document.getElementById('login-error');
-    const signupError = document.getElementById('signup-error');
-    const signupSuccess = document.getElementById('signup-success');
-
     const restricaoButtons = document.querySelectorAll('.restricao-btn');
     const restricoesSelecionadas = new Set();
 
     restricaoButtons.forEach(button => {
       button.addEventListener('click', () => {
         const valor = button.dataset.value;
-
         if (valor === 'nenhuma') {
-          // Se clicar em Nenhuma, desmarca todas as outras
           restricoesSelecionadas.clear();
           restricaoButtons.forEach(btn => btn.classList.remove('active'));
           button.classList.add('active');
           restricoesSelecionadas.add('nenhuma');
         } else {
-          // Se clicar em outra restrição, desmarca o Nenhuma
           restricoesSelecionadas.delete('nenhuma');
-          restricaoButtons.forEach(btn => {
-            if (btn.dataset.value === 'nenhuma') btn.classList.remove('active');
-          });
+          document.querySelector('[data-value="nenhuma"]').classList.remove('active');
 
           if (restricoesSelecionadas.has(valor)) {
             restricoesSelecionadas.delete(valor);
@@ -233,87 +191,46 @@
     document.getElementById('show-signup').addEventListener('click', () => {
       loginForm.classList.add('hidden');
       signupForm.classList.remove('hidden');
-      limparMensagens();
-      limparCampos();
     });
 
     document.getElementById('show-login').addEventListener('click', () => {
       signupForm.classList.add('hidden');
       loginForm.classList.remove('hidden');
-      limparMensagens();
-      limparCampos();
     });
 
-    function limparMensagens() {
-      loginError.textContent = '';
-      signupError.textContent = '';
-      signupSuccess.textContent = '';
-    }
-
-    function limparCampos() {
-      loginForm.querySelectorAll('input').forEach(input => input.value = '');
-      signupForm.querySelectorAll('input').forEach(input => input.value = '');
-      restricaoButtons.forEach(btn => btn.classList.remove('active'));
-      restricoesSelecionadas.clear();
-    }
-
     document.getElementById('login-btn').addEventListener('click', async () => {
-      limparMensagens();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
 
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value.trim();
-
-      if (!email || !password) {
-        loginError.textContent = 'Preencha todos os campos.';
-        return;
-      }
-
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) {
-        loginError.textContent = 'Erro: ' + error.message;
+        document.getElementById('login-error').textContent = error.message;
       } else {
-        alert('Login realizado com sucesso!');
-        // Redirecionar ou ação pós login aqui
+        window.location.href = 'formulario.html';
       }
     });
 
     document.getElementById('signup-btn').addEventListener('click', async () => {
-      limparMensagens();
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const restricoes = [...restricoesSelecionadas];
+      if (restricoes.includes('nenhuma')) restricoes.length = 0;
 
-      const email = document.getElementById('signup-email').value.trim();
-      const password = document.getElementById('signup-password').value.trim();
+      const { error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { restricoes } }
+      });
 
-      if (!email || !password) {
-        signupError.textContent = 'Preencha todos os campos.';
-        return;
-      }
-
-      // Se "nenhuma" estiver selecionada, ignorar outras
-      let restricoesArray = Array.from(restricoesSelecionadas);
-      if (restricoesArray.includes('nenhuma')) {
-        restricoesArray = [];
-      }
-
-      try {
-        const { data, error } = await supabaseClient.auth.signUp(
-          { email, password },
-          { data: { restricoes: restricoesArray } }
-        );
-
-        if (error) {
-          signupError.textContent = 'Erro: ' + error.message;
-        } else {
-          signupSuccess.textContent = 'Cadastro realizado com sucesso! Verifique seu e-mail para confirmar.';
-          localStorage.setItem('userEmail', data.user.email);
-          setTimeout(() => {
-            window.location.href = 'formulario.html';
-          }, 1500);
-        }
-      } catch (err) {
-        signupError.textContent = 'Erro inesperado: ' + err.message;
+      if (error) {
+        document.getElementById('signup-error').textContent = error.message;
+      } else {
+        signupForm.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+        document.getElementById('signup-success').textContent = 'Cadastro realizado com sucesso! Faça login.';
       }
     });
   </script>
 </body>
 </html>
+
