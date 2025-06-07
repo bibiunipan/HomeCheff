@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home Cheff - Login</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    :root {
+      --roxo: #6c4ab6;
+      --lilas: #9a80d7;
+      --branco: #fff;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--branco);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: var(--branco);
+      padding: 32px;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(108, 74, 182, 0.2);
+      text-align: center;
+    }
+
+    h2 {
+      color: var(--roxo);
+      margin-bottom: 24px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: var(--roxo);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: var(--lilas);
+    }
+
+    .toggle {
+      margin-top: 16px;
+      font-size: 0.9rem;
+    }
+
+    .toggle a {
+      color: var(--roxo);
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .logo {
+      max-width: 150px;
+      margin-bottom: 20px;
+    }
+
+    .error {
+      color: red;
+      margin-bottom: 10px;
+    }
+
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="logo.png" alt="Logo Home Cheff" class="logo" />
+    <h2 id="form-title">Entrar</h2>
+    <div id="error-message" class="error"></div>
+    <input type="email" id="email" placeholder="E-mail" required />
+    <input type="password" id="password" placeholder="Senha" required />
+    <button onclick="handleSubmit()">Entrar</button>
+    <div class="toggle">
+      <span id="toggle-text">Ainda não tem conta? <a onclick="toggleForm()">Cadastre-se</a></span>
+    </div>
+  </div>
+
+  <script>
+    const supabase = supabase.createClient(
+      'https://ytztgkuzvdmlnbzelmct.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0enRna3V6dmRtbG5iemVsbWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwODAyODEsImV4cCI6MjA2NDY1NjI4MX0.UFLTaoKbkenLhL_xu8Zdi3Zv73qR0t9M-KE_Jym4r3k'
+    );
+
+    let isLogin = true;
+
+    function toggleForm() {
+      isLogin = !isLogin;
+      document.getElementById('form-title').textContent = isLogin ? 'Entrar' : 'Cadastrar';
+      document.querySelector('button').textContent = isLogin ? 'Entrar' : 'Cadastrar';
+      document.getElementById('toggle-text').innerHTML = isLogin
+        ? 'Ainda não tem conta? <a onclick="toggleForm()">Cadastre-se</a>'
+        : 'Já tem conta? <a onclick="toggleForm()">Entrar</a>';
+      document.getElementById('error-message').textContent = '';
+    }
+
+    async function handleSubmit() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorDiv = document.getElementById('error-message');
+
+      if (!email || !password) {
+        errorDiv.textContent = 'Preencha todos os campos.';
+        return;
+      }
+
+      errorDiv.textContent = '';
+
+      if (isLogin) {
+        const { error, data } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          errorDiv.textContent = error.message;
+        } else {
+          window.location.href = 'index.html'; // redireciona para a página principal
+        }
+      } else {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) {
+          errorDiv.textContent = error.message;
+        } else {
+          errorDiv.style.color = 'green';
+          errorDiv.textContent = 'Cadastro realizado! Verifique seu e-mail para confirmar.';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
