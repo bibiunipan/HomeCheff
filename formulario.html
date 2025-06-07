@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home Cheff</title>
+  <style>
+    body {
+      background-color: #ffffff;
+      font-family: Arial, sans-serif;
+      color: #000;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #6c4ab6;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.8rem;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #f7f7f7;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+      font-weight: bold;
+    }
+
+    select, input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 0.7rem;
+      border: 2px solid #6c4ab6;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 1rem;
+      background-color: #6c4ab6;
+      color: white;
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .card {
+      background: white;
+      border: 2px solid #6c4ab6;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>Home Cheff</header>
+  <main>
+    <label for="filtro">Como deseja buscar?</label>
+    <select id="filtro" onchange="mostrarCampoFiltro()">
+      <option value="">Selecione</option>
+      <option value="nome">Nome da Receita</option>
+      <option value="ingredientes">Ingredientes</option>
+      <option value="tempo">Tempo de Preparo (min)</option>
+    </select>
+
+    <div id="campo-filtro"></div>
+
+    <button onclick="buscarReceitas()">Buscar</button>
+
+    <div id="resultados"></div>
+  </main>
+
+  <footer>© Home Cheff. Todos os direitos reservados.</footer>
+
+  <script>
+    function mostrarCampoFiltro() {
+      const tipo = document.getElementById('filtro').value;
+      const campo = document.getElementById('campo-filtro');
+      campo.innerHTML = '';
+
+      if (tipo === 'nome') {
+        campo.innerHTML = '<label>Nome:</label><input type="text" id="valorFiltro">';
+      } else if (tipo === 'ingredientes') {
+        campo.innerHTML = '<label>Ingredientes (separados por vírgula):</label><input type="text" id="valorFiltro">';
+      } else if (tipo === 'tempo') {
+        campo.innerHTML = '<label>Tempo máximo (minutos):</label><input type="number" id="valorFiltro">';
+      }
+    }
+
+    async function buscarReceitas() {
+      const filtro = document.getElementById('filtro').value;
+      const valor = document.getElementById('valorFiltro')?.value || '';
+
+      if (!filtro || !valor) {
+        alert("Preencha todos os campos.");
+        return;
+      }
+
+      const response = await fetch(`http://localhost:8000/buscar-receitas?filtro=${filtro}&valor=${encodeURIComponent(valor)}`);
+      const receitas = await response.json();
+
+      const resultados = document.getElementById('resultados');
+      resultados.innerHTML = '';
+
+      receitas.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h3>${r.nome}</h3><p>Tempo: ${r.tempo_preparo} min</p>`;
+        card.onclick = async () => {
+          const res = await fetch(`http://localhost:8000/receita/${r.id}`);
+          const detalhes = await res.json();
+          alert(`Ingredientes: ${detalhes.ingredientes.join(', ')}\n\nPreparo: ${detalhes.modo_preparo}`);
+        };
+        resultados.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
