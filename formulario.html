@@ -188,6 +188,8 @@
     }
   </style>
 </head>
+<!-- ... seu código css e html igual até aqui ... -->
+
 <body>
   <div class="container">
     <div class="logo-container">
@@ -201,22 +203,45 @@
       <p>Já tem uma conta?</p>
       <a href="login.html">Fazer Login</a>
     </div>
+
+    <!-- Botão de logout, escondido inicialmente -->
+    <div class="logout-link" id="logoutLink" style="display:none; text-align:center; margin: 20px 0;">
+      <button id="btnLogout" style="
+        background: var(--branco);
+        color: var(--roxo);
+        border: 2px solid var(--roxo);
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(108, 74, 182, 0.3);
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      ">Sair</button>
+    </div>
   </div>
 
   <script>
     const chatArea = document.getElementById('chatArea');
     const welcomeMsg = document.getElementById('welcomeMsg');
     const loginLink = document.getElementById('loginLink');
+    const logoutLink = document.getElementById('logoutLink');
+    const btnLogout = document.getElementById('btnLogout');
 
-    // Pega o nome do usuário no localStorage (mude a chave se necessário)
+    // Pega o nome do usuário no localStorage
     const userName = localStorage.getItem('userName');
 
-    // Se tiver usuário logado
     if (userName) {
       welcomeMsg.textContent = `Bem-vindo, ${userName} ao Home Cheff!`;
-      loginLink.style.display = 'none'; // Esconde o botão de login
+      loginLink.style.display = 'none';  // Esconde botão login
+      logoutLink.style.display = 'block'; // Mostra botão logout
     }
 
+    btnLogout.onclick = () => {
+      localStorage.removeItem('userName');
+      location.reload(); // Recarrega a página para atualizar a interface
+    };
+
+    // Seu código do chat segue igual
     let etapa = 0;
     let buscaEscolhida = '';
     let valorBusca = '';
@@ -345,4 +370,4 @@
     iniciarChat();
   </script>
 </body>
-</html>
+
