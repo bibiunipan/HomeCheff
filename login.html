@@ -10,171 +10,120 @@
       --roxo: #6c4ab6;
       --lilas: #9a80d7;
       --branco: #fff;
-      --cinza-claro: #f4f4f8;
-      --cinza-escuro: #666;
-    }
-
-    * {
-      box-sizing: border-box;
     }
 
     body {
-      margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--cinza-claro);
+      background: var(--branco);
+      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      padding: 20px;
     }
 
     .container {
-      background: var(--branco);
-      border-radius: 20px;
-      box-shadow: 0 12px 32px rgba(108, 74, 182, 0.25);
-      max-width: 420px;
       width: 100%;
-      padding: 40px 32px 48px;
+      max-width: 400px;
+      background: var(--branco);
+      padding: 32px;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(108, 74, 182, 0.2);
       text-align: center;
-      position: relative;
-      overflow: hidden;
     }
 
     .logo {
-      max-width: 140px;
-      margin-bottom: 32px;
-      user-select: none;
+      max-width: 150px;
+      margin-bottom: 20px;
     }
 
     h2 {
-      margin: 0 0 32px;
       color: var(--roxo);
-      font-weight: 700;
-      font-size: 2rem;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      transition: opacity 0.3s ease, transform 0.3s ease;
+      margin-bottom: 24px;
     }
 
     input {
-      padding: 14px 16px;
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
       font-size: 1rem;
-      border-radius: 10px;
-      border: 2px solid var(--roxo);
-      outline-offset: 2px;
-      outline-color: transparent;
-      transition: outline-color 0.3s ease;
     }
 
-    input:focus {
-      outline-color: var(--lilas);
-      border-color: var(--lilas);
-    }
-
-    button.submit-btn {
-      padding: 14px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: var(--branco);
-      background-color: var(--roxo);
+    button {
+      width: 100%;
+      padding: 12px;
+      background: var(--roxo);
+      color: white;
       border: none;
-      border-radius: 12px;
+      border-radius: 8px;
+      font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 6px 15px rgba(108, 74, 182, 0.4);
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    button.submit-btn:hover,
-    button.submit-btn:focus {
-      background-color: var(--lilas);
-      transform: scale(1.05);
-      outline: none;
-    }
-
-    .toggle-text {
-      margin-top: 24px;
+      transition: background 0.3s ease;
       font-size: 1rem;
-      color: var(--cinza-escuro);
     }
 
-    .toggle-text a {
+    button:hover {
+      background: var(--lilas);
+    }
+
+    .toggle {
+      margin-top: 16px;
+      font-size: 0.9rem;
+    }
+
+    .toggle a {
       color: var(--roxo);
-      font-weight: 700;
       cursor: pointer;
+      font-weight: bold;
       text-decoration: none;
-      transition: color 0.3s ease;
     }
 
-    .toggle-text a:hover,
-    .toggle-text a:focus {
-      color: var(--lilas);
-      outline: none;
-      text-decoration: underline;
+    .error {
+      color: red;
+      margin-bottom: 10px;
+      min-height: 20px;
     }
 
-    .error-message {
-      color: #e03e3e;
-      margin-bottom: 12px;
-      font-weight: 600;
-      min-height: 24px;
+    .success {
+      color: green;
+      margin-bottom: 10px;
+      min-height: 20px;
     }
 
-    .success-message {
-      color: #3ea05e;
-      margin-bottom: 12px;
-      font-weight: 600;
-      min-height: 24px;
-    }
-
-    /* Esconde o formulário que não está ativo */
     .hidden {
-      position: absolute;
-      top: 90px;
-      left: 0;
-      right: 0;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(20px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .visible {
-      position: relative;
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
+      display: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <img src="logo.png" alt="Logo Home Cheff" class="logo" />
-    <h2 id="form-title">Entrar</h2>
-
-    <div id="error-message" class="error-message"></div>
-    <div id="success-message" class="success-message"></div>
+    <img src="logo2.png" alt="Logo Home Cheff" class="logo" />
 
     <!-- Formulário Login -->
-    <form id="login-form" class="visible" onsubmit="handleSubmit(event)">
-      <input type="email" id="login-email" placeholder="E-mail" required autocomplete="username" />
-      <input type="password" id="login-password" placeholder="Senha" required autocomplete="current-password" />
-      <button type="submit" class="submit-btn">Entrar</button>
-    </form>
+    <div id="login-form">
+      <h2>Entrar</h2>
+      <div id="login-error" class="error"></div>
+      <input type="email" id="login-email" placeholder="E-mail" required />
+      <input type="password" id="login-password" placeholder="Senha" required />
+      <button id="login-btn">Entrar</button>
+      <div class="toggle">
+        Ainda não tem conta? <a id="show-signup">Cadastre-se</a>
+      </div>
+    </div>
 
     <!-- Formulário Cadastro -->
-    <form id="signup-form" class="hidden" onsubmit="handleSubmit(event)">
-      <input type="email" id="signup-email" placeholder="E-mail" required autocomplete="email" />
-      <input type="password" id="signup-password" placeholder="Senha" required autocomplete="new-password" />
-      <button type="submit" class="submit-btn">Cadastrar</button>
-    </form>
-
-    <div class="toggle-text" id="toggle-text">
-      Ainda não tem conta? <a tabindex="0" role="button" id="toggle-link">Cadastre-se</a>
+    <div id="signup-form" class="hidden">
+      <h2>Cadastrar</h2>
+      <div id="signup-error" class="error"></div>
+      <div id="signup-success" class="success"></div>
+      <input type="email" id="signup-email" placeholder="E-mail" required />
+      <input type="password" id="signup-password" placeholder="Senha" required />
+      <button id="signup-btn">Cadastrar</button>
+      <div class="toggle">
+        Já tem conta? <a id="show-login">Entrar</a>
+      </div>
     </div>
   </div>
 
@@ -186,89 +135,76 @@
 
     const loginForm = document.getElementById('login-form');
     const signupForm = document.getElementById('signup-form');
-    const toggleLink = document.getElementById('toggle-link');
-    const formTitle = document.getElementById('form-title');
-    const toggleText = document.getElementById('toggle-text');
-    const errorMessage = document.getElementById('error-message');
-    const successMessage = document.getElementById('success-message');
 
-    let isLogin = true;
+    const loginError = document.getElementById('login-error');
+    const signupError = document.getElementById('signup-error');
+    const signupSuccess = document.getElementById('signup-success');
 
-    toggleLink.addEventListener('click', toggleForm);
-    toggleLink.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleForm();
+    // Mostrar formulário de cadastro
+    document.getElementById('show-signup').addEventListener('click', () => {
+      loginForm.classList.add('hidden');
+      signupForm.classList.remove('hidden');
+
+      loginError.textContent = '';
+      signupError.textContent = '';
+      signupSuccess.textContent = '';
+    });
+
+    // Mostrar formulário de login
+    document.getElementById('show-login').addEventListener('click', () => {
+      signupForm.classList.add('hidden');
+      loginForm.classList.remove('hidden');
+
+      loginError.textContent = '';
+      signupError.textContent = '';
+      signupSuccess.textContent = '';
+    });
+
+    // Função para login
+    document.getElementById('login-btn').addEventListener('click', async () => {
+      loginError.textContent = '';
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+
+      if (!email || !password) {
+        loginError.textContent = 'Preencha todos os campos.';
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        loginError.textContent = error.message;
+      } else {
+        // Login com sucesso, redireciona
+        window.location.href = 'index.html';
       }
     });
 
-    function toggleForm() {
-      isLogin = !isLogin;
-      errorMessage.textContent = '';
-      successMessage.textContent = '';
+    // Função para cadastro
+    document.getElementById('signup-btn').addEventListener('click', async () => {
+      signupError.textContent = '';
+      signupSuccess.textContent = '';
 
-      if (isLogin) {
-        formTitle.textContent = 'Entrar';
-        toggleText.innerHTML = 'Ainda não tem conta? <a tabindex="0" role="button" id="toggle-link">Cadastre-se</a>';
-        loginForm.classList.replace('hidden', 'visible');
-        signupForm.classList.replace('visible', 'hidden');
-      } else {
-        formTitle.textContent = 'Cadastrar';
-        toggleText.innerHTML = 'Já tem conta? <a tabindex="0" role="button" id="toggle-link">Entrar</a>';
-        signupForm.classList.replace('hidden', 'visible');
-        loginForm.classList.replace('visible', 'hidden');
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value.trim();
+
+      if (!email || !password) {
+        signupError.textContent = 'Preencha todos os campos.';
+        return;
       }
 
-      // Re-bind toggle event because innerHTML was replaced
-      document.getElementById('toggle-link').addEventListener('click', toggleForm);
-      document.getElementById('toggle-link').addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggleForm();
-        }
-      });
-    }
+      const { error } = await supabase.auth.signUp({ email, password });
 
-    async function handleSubmit(event) {
-      event.preventDefault();
-      errorMessage.textContent = '';
-      successMessage.textContent = '';
-
-      if (isLogin) {
-        const email = document.getElementById('login-email').value.trim();
-        const password = document.getElementById('login-password').value.trim();
-
-        if (!email || !password) {
-          errorMessage.textContent = 'Preencha todos os campos.';
-          return;
-        }
-
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) {
-          errorMessage.textContent = error.message;
-        } else {
-          window.location.href = 'index.html';
-        }
+      if (error) {
+        signupError.textContent = error.message;
       } else {
-        const email = document.getElementById('signup-email').value.trim();
-        const password = document.getElementById('signup-password').value.trim();
-
-        if (!email || !password) {
-          errorMessage.textContent = 'Preencha todos os campos.';
-          return;
-        }
-
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) {
-          errorMessage.textContent = error.message;
-        } else {
-          successMessage.textContent = 'Cadastro realizado! Verifique seu e-mail para confirmar.';
-          signupForm.reset();
-        }
+        signupSuccess.textContent = 'Cadastro realizado! Verifique seu e-mail para confirmar.';
       }
-    }
+    });
   </script>
 </body>
 </html>
+
 
 
