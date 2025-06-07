@@ -60,6 +60,30 @@
       border-bottom: 2px solid var(--roxo);
     }
 
+    /* Botão login container */
+    .login-btn-container {
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .login-btn-container button {
+      width: 150px;
+      background: var(--roxo);
+      color: var(--branco);
+      border: none;
+      padding: 12px 0;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(108, 74, 182, 0.3);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .login-btn-container button:hover {
+      background: var(--lilas);
+      transform: scale(1.05);
+    }
+
     .chat-area {
       padding: 20px;
       display: flex;
@@ -178,10 +202,14 @@
       <img src="logo.png" alt="Logo HomeChef" class="logo" />
     </div>
     <div class="welcome-msg">Bem-vindo ao Home Cheff!</div>
+
+    <!-- Botão Login -->
+    <div class="login-btn-container">
+      <button id="btnLogin">Login</button>
+    </div>
+
     <div class="chat-area" id="chatArea"></div>
   </div>
-</body>
-</html>
 
   <script>
     const chatArea = document.getElementById('chatArea');
@@ -302,35 +330,20 @@
 
         if (receitas.length === 0) {
           criarBolha('Nenhuma receita encontrada.', 'bot');
-        } else {
-          criarBolha('Aqui estão as receitas encontradas:', 'bot');
-          receitas.forEach(r => {
-            const receitaDiv = document.createElement('div');
-            receitaDiv.className = 'bubble bot';
-            receitaDiv.style.cursor = 'pointer';
-            receitaDiv.style.background = 'var(--lilas)';
-            receitaDiv.style.color = 'var(--roxo)';
-            receitaDiv.style.borderRadius = '15px';
-            receitaDiv.style.marginTop = '6px';
-            receitaDiv.style.fontWeight = '600';
-            receitaDiv.textContent = r.nome;
-            receitaDiv.onclick = () => mostrarDetalhes(r);
-            chatArea.appendChild(receitaDiv);
-          });
-          chatArea.scrollTop = chatArea.scrollHeight;
+          return;
         }
-      } catch (e) {
-        criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
+
+        criarBolha('Receitas encontradas:', 'bot');
+        receitas.forEach(r => criarBolha(`- ${r.nome}`, 'bot'));
+      } catch (error) {
+        criarBolha('Erro ao buscar receitas.', 'bot');
       }
     }
 
-    // Mostrar detalhes da receita no chat
-    function mostrarDetalhes(receita) {
-      criarBolha(`Detalhes da receita: ${receita.nome}`, 'user');
-      criarBolha(`Ingredientes: ${receita.ingredientes.join(', ')}`, 'bot');
-      criarBolha(`Tempo de preparo: ${receita.tempo} minutos`, 'bot');
-      criarBolha(`Modo de preparo: ${receita.modo_preparo}`, 'bot');
-    }
+    // Evento do botão Login
+    document.getElementById('btnLogin').addEventListener('click', () => {
+      window.location.href = 'login.html?next=index.html';
+    });
 
     // Começa o chat
     iniciarChat();
