@@ -42,26 +42,29 @@
       margin-bottom: 24px;
     }
 
-    input {
+    input, button.restricao-btn {
       width: 100%;
-      padding: 12px;
+      min-height: 44px;
+      padding: 10px 12px;
       margin-bottom: 16px;
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 1rem;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+    }
+
+    input {
+      border: 1px solid #ccc;
     }
 
     button {
-      width: 100%;
-      padding: 12px;
       background: var(--roxo);
       color: white;
       border: none;
-      border-radius: 8px;
       font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-      font-size: 1rem;
     }
 
     button:hover {
@@ -113,33 +116,28 @@
     }
 
     .restricoes-buttons {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
     }
 
-    .restricao-btn {
-      flex: 1 1 30%;
-      min-width: 100px;
-      padding: 12px 10px;
+    button.restricao-btn {
       border: 2px solid var(--roxo);
-      border-radius: 8px;
       background-color: var(--branco);
       color: var(--roxo);
       font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
       user-select: none;
-      transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
       text-align: center;
+      box-sizing: border-box;
+      padding: 10px 0;
     }
 
-    .restricao-btn:hover {
+    button.restricao-btn:hover {
       background-color: var(--lilas);
       color: var(--branco);
     }
 
-    .restricao-btn.active {
+    button.restricao-btn.active {
       background-color: var(--roxo);
       color: var(--branco);
       box-shadow: 0 4px 12px rgba(108, 74, 182, 0.6);
@@ -174,11 +172,10 @@
         <label>Restrições alimentares:</label>
         <div class="restricoes-buttons">
           <button type="button" class="restricao-btn" data-value="gluten">Glúten</button>
+          <button type="button" class="restricao-btn" data-value="vegana">Vegana</button>
           <button type="button" class="restricao-btn" data-value="lactose">Lactose</button>
-          <button type="button" class="restricao-btn" data-value="frutos_do_mar">Frutos do mar</button>
-          <button type="button" class="restricao-btn" data-value="ovos">Ovos</button>
-          <button type="button" class="restricao-btn" data-value="nozes">Nozes</button>
-          <button type="button" class="restricao-btn" data-value="soja">Soja</button>
+          <button type="button" class="restricao-btn" data-value="afins">Afins</button>
+          <button type="button" class="restricao-btn" data-value="nenhuma">Nenhuma</button>
         </div>
       </div>
 
@@ -190,13 +187,11 @@
   </div>
 
   <script>
-    // Inicializa cliente Supabase
     const supabaseClient = supabase.createClient(
       'https://ytztgkuzvdmlnbzelmct.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0enRna3V6dmRtbG5iemVsbWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwODAyODEsImV4cCI6MjA2NDY1NjI4MX0.UFLTaoKbkenLhL_xu8Zdi3Zv73qR0t9M-KE_Jym4r3k'
     );
 
-    // Seleciona elementos
     const loginForm = document.getElementById('login-form');
     const signupForm = document.getElementById('signup-form');
 
@@ -204,24 +199,37 @@
     const signupError = document.getElementById('signup-error');
     const signupSuccess = document.getElementById('signup-success');
 
-    // Controle das restrições selecionadas
     const restricaoButtons = document.querySelectorAll('.restricao-btn');
     const restricoesSelecionadas = new Set();
 
     restricaoButtons.forEach(button => {
       button.addEventListener('click', () => {
         const valor = button.dataset.value;
-        if (restricoesSelecionadas.has(valor)) {
-          restricoesSelecionadas.delete(valor);
-          button.classList.remove('active');
-        } else {
-          restricoesSelecionadas.add(valor);
+
+        if (valor === 'nenhuma') {
+          // Se clicar em Nenhuma, desmarca todas as outras
+          restricoesSelecionadas.clear();
+          restricaoButtons.forEach(btn => btn.classList.remove('active'));
           button.classList.add('active');
+          restricoesSelecionadas.add('nenhuma');
+        } else {
+          // Se clicar em outra restrição, desmarca o Nenhuma
+          restricoesSelecionadas.delete('nenhuma');
+          restricaoButtons.forEach(btn => {
+            if (btn.dataset.value === 'nenhuma') btn.classList.remove('active');
+          });
+
+          if (restricoesSelecionadas.has(valor)) {
+            restricoesSelecionadas.delete(valor);
+            button.classList.remove('active');
+          } else {
+            restricoesSelecionadas.add(valor);
+            button.classList.add('active');
+          }
         }
       });
     });
 
-    // Mostrar formulário de cadastro
     document.getElementById('show-signup').addEventListener('click', () => {
       loginForm.classList.add('hidden');
       signupForm.classList.remove('hidden');
@@ -229,7 +237,6 @@
       limparCampos();
     });
 
-    // Mostrar formulário de login
     document.getElementById('show-login').addEventListener('click', () => {
       signupForm.classList.add('hidden');
       loginForm.classList.remove('hidden');
@@ -237,14 +244,12 @@
       limparCampos();
     });
 
-    // Função para limpar mensagens de erro/sucesso
     function limparMensagens() {
       loginError.textContent = '';
       signupError.textContent = '';
       signupSuccess.textContent = '';
     }
 
-    // Função para limpar campos de formulário
     function limparCampos() {
       loginForm.querySelectorAll('input').forEach(input => input.value = '');
       signupForm.querySelectorAll('input').forEach(input => input.value = '');
@@ -252,7 +257,6 @@
       restricoesSelecionadas.clear();
     }
 
-    // Login
     document.getElementById('login-btn').addEventListener('click', async () => {
       limparMensagens();
 
@@ -270,12 +274,10 @@
         loginError.textContent = 'Erro: ' + error.message;
       } else {
         alert('Login realizado com sucesso!');
-        // Aqui você pode redirecionar para outra página:
-        // window.location.href = 'dashboard.html';
+        // Redirecionar ou ação pós login aqui
       }
     });
 
-    // Cadastro
     document.getElementById('signup-btn').addEventListener('click', async () => {
       limparMensagens();
 
@@ -287,7 +289,11 @@
         return;
       }
 
-      const restricoesArray = Array.from(restricoesSelecionadas);
+      // Se "nenhuma" estiver selecionada, ignorar outras
+      let restricoesArray = Array.from(restricoesSelecionadas);
+      if (restricoesArray.includes('nenhuma')) {
+        restricoesArray = [];
+      }
 
       try {
         const { data, error } = await supabaseClient.auth.signUp(
@@ -301,7 +307,7 @@
           signupSuccess.textContent = 'Cadastro realizado com sucesso! Verifique seu e-mail para confirmar.';
           localStorage.setItem('userEmail', data.user.email);
           setTimeout(() => {
-            window.location.href = 'formulario.html';  // Redireciona após sucesso
+            window.location.href = 'formulario.html';
           }, 1500);
         }
       } catch (err) {
@@ -311,5 +317,3 @@
   </script>
 </body>
 </html>
-
-
