@@ -79,6 +79,7 @@
       cursor: pointer;
       font-weight: bold;
       text-decoration: none;
+      user-select: none;
     }
 
     .error {
@@ -189,11 +190,13 @@
   </div>
 
   <script>
+    // Inicializa cliente Supabase
     const supabaseClient = supabase.createClient(
       'https://ytztgkuzvdmlnbzelmct.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0enRna3V6dmRtbG5iemVsbWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwODAyODEsImV4cCI6MjA2NDY1NjI4MX0.UFLTaoKbkenLhL_xu8Zdi3Zv73qR0t9M-KE_Jym4r3k'
     );
 
+    // Seleciona elementos
     const loginForm = document.getElementById('login-form');
     const signupForm = document.getElementById('signup-form');
 
@@ -222,25 +225,37 @@
     document.getElementById('show-signup').addEventListener('click', () => {
       loginForm.classList.add('hidden');
       signupForm.classList.remove('hidden');
-
-      loginError.textContent = '';
-      signupError.textContent = '';
-      signupSuccess.textContent = '';
+      limparMensagens();
+      limparCampos();
     });
 
     // Mostrar formulário de login
     document.getElementById('show-login').addEventListener('click', () => {
       signupForm.classList.add('hidden');
       loginForm.classList.remove('hidden');
+      limparMensagens();
+      limparCampos();
+    });
 
+    // Função para limpar mensagens de erro/sucesso
+    function limparMensagens() {
       loginError.textContent = '';
       signupError.textContent = '';
       signupSuccess.textContent = '';
-    });
+    }
 
-    // Função para login
+    // Função para limpar campos de formulário
+    function limparCampos() {
+      loginForm.querySelectorAll('input').forEach(input => input.value = '');
+      signupForm.querySelectorAll('input').forEach(input => input.value = '');
+      restricaoButtons.forEach(btn => btn.classList.remove('active'));
+      restricoesSelecionadas.clear();
+    }
+
+    // Login
     document.getElementById('login-btn').addEventListener('click', async () => {
-      loginError.textContent = '';
+      limparMensagens();
+
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value.trim();
 
@@ -255,14 +270,14 @@
         loginError.textContent = 'Erro: ' + error.message;
       } else {
         alert('Login realizado com sucesso!');
-        // Redirecionar ou atualizar a página, etc.
+        // Aqui você pode redirecionar para outra página:
+        // window.location.href = 'dashboard.html';
       }
     });
 
-    // Função para cadastro
+    // Cadastro
     document.getElementById('signup-btn').addEventListener('click', async () => {
-      signupError.textContent = '';
-      signupSuccess.textContent = '';
+      limparMensagens();
 
       const email = document.getElementById('signup-email').value.trim();
       const password = document.getElementById('signup-password').value.trim();
@@ -273,24 +288,24 @@
       }
 
       const restricoesArray = Array.from(restricoesSelecionadas);
-      console.log('Restrições selecionadas no cadastro:', restricoesArray);
 
-      // Cadastro no Supabase
-      const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-      }, {
-        data: { restricoes: restricoesArray }
-      });
+      try {
+        const { data, error } = await supabaseClient.auth.signUp(
+          { email, password },
+          { data: { restricoes: restricoesArray } }
+        );
 
-      if (error) {
-        signupError.textContent = 'Erro: ' + error.message;
-      } else {
-        signupSuccess.textContent = 'Cadastro realizado com sucesso! Verifique seu e-mail para confirmar.';
-        localStorage.setItem('userEmail', data.user.email);
-        window.location.href = 'formulario.html';  // redireciona para o formulário
+        if (error) {
+          signupError.textContent = 'Erro: ' + error.message;
+        } else {
+          signupSuccess.textContent = 'Cadastro realizado com sucesso! Verifique seu e-mail para confirmar.';
+          localStorage.setItem('userEmail', data.user.email);
+          setTimeout(() => {
+            window.location.href = 'formulario.html';  // Redireciona após sucesso
+          }, 1500);
         }
-
+      } catch (err) {
+        signupError.textContent = 'Erro inesperado: ' + err.message;
       }
     });
   </script>
