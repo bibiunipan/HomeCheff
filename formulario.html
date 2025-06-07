@@ -100,23 +100,42 @@
       margin-top: 6px;
     }
 
-    .option-btn {
-      flex: 1;
-      min-width: 120px;
-      background: var(--roxo);
-      color: var(--branco);
-      border: none;
+    /* Botões com fundo branco, borda roxa e sombra */
+    .option-btn,
+    .send-btn,
+    .login-link a {
+      background: var(--branco);
+      color: var(--roxo);
+      border: 2px solid var(--roxo);
       padding: 12px 0;
       border-radius: 30px;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
       box-shadow: 0 4px 10px rgba(108, 74, 182, 0.3);
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      text-align: center;
+      display: inline-block;
+      user-select: none;
     }
 
-    .option-btn:hover {
-      background: var(--lilas);
+    .option-btn {
+      flex: 1;
+      min-width: 120px;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .option-btn:hover,
+    .option-btn:focus,
+    .send-btn:hover,
+    .send-btn:focus,
+    .login-link a:hover,
+    .login-link a:focus {
+      background: var(--roxo);
+      color: var(--branco);
       transform: scale(1.05);
+      outline: none;
+      text-decoration: none;
     }
 
     .input-area {
@@ -137,45 +156,21 @@
       border-color: var(--lilas);
     }
 
+    /* Ajuste do botão enviar (send-btn) para largura total */
     .send-btn {
-      margin-top: 10px;
-      background: var(--roxo);
-      color: var(--branco);
-      border: none;
-      padding: 12px;
       width: 100%;
-      border-radius: 30px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(108, 74, 182, 0.3);
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    .send-btn:hover {
-      background: var(--lilas);
-      transform: scale(1.05);
+      padding: 12px 0;
+      margin-top: 10px;
     }
 
     .login-link {
       text-align: center;
       margin: 20px 0;
+      font-size: 0.9rem;
+      color: var(--roxo);
     }
 
-    .login-link a {
-      display: inline-block;
-      padding: 12px 24px;
-      background-color: var(--roxo);
-      color: white;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background 0.3s ease;
-    }
-
-    .login-link a:hover {
-      background-color: var(--lilas);
-    }
-
+    /* Scrollbar */
     .chat-area::-webkit-scrollbar {
       width: 8px;
     }
@@ -203,7 +198,7 @@
 
     <!-- Botão de login -->
     <div class="login-link">
-      <p style="font-size: 0.9rem; color: var(--roxo);">Já tem uma conta?</p>
+      <p>Já tem uma conta?</p>
       <a href="login.html">Fazer Login</a>
     </div>
   </div>
