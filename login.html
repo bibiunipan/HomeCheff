@@ -183,25 +183,25 @@
 
     // Função para cadastro
     document.getElementById('signup-btn').addEventListener('click', async () => {
-      signupError.textContent = '';
-      signupSuccess.textContent = '';
+  signupError.textContent = '';
+  signupSuccess.textContent = '';
 
-      const email = document.getElementById('signup-email').value.trim();
-      const password = document.getElementById('signup-password').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value.trim();
 
-      if (!email || !password) {
-        signupError.textContent = 'Preencha todos os campos.';
-        return;
-      }
+  if (!email || !password) {
+    signupError.textContent = 'Preencha todos os campos.';
+    return;
+  }
 
-     const { error, data } = await supabaseClient.auth.signInWithPassword({ email, password });
+  const { error, data } = await supabaseClient.auth.signUp({ email, password });
 
-      if (error) {
-        signupError.textContent = error.message;
-      } else {
-        signupSuccess.textContent = 'Cadastro realizado! Verifique seu e-mail para confirmar.';
-      }
-    });
+  if (error) {
+    signupError.textContent = error.message;
+  } else {
+    signupSuccess.textContent = 'Cadastro realizado! Verifique seu e-mail para confirmar.';
+  }
+});
   </script>
 </body>
 </html>
