@@ -2,152 +2,183 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home Cheff - Login</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login / Cadastro</title>
   <style>
-    :root {
-      --roxo: #6c4ab6;
-      --lilas: #9a80d7;
-      --branco: #fff;
-    }
-
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--branco);
-      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
 
     .container {
-      width: 100%;
-      max-width: 400px;
-      background: var(--branco);
-      padding: 32px;
-      border-radius: 20px;
-      box-shadow: 0 8px 24px rgba(108, 74, 182, 0.2);
-      text-align: center;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 320px;
     }
 
     h2 {
-      color: var(--roxo);
-      margin-bottom: 24px;
+      text-align: center;
+      color: #5a2a83; /* roxo escuro */
+      margin-bottom: 20px;
     }
 
-    input {
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      padding: 10px 12px;
+      margin-bottom: 15px;
+      border: 2px solid #5a2a83;
+      border-radius: 6px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: #7c46b3; /* roxo mais claro */
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      background: var(--roxo);
+      padding: 10px;
+      background: white;
+      color: #5a2a83;
+      border: 2px solid #5a2a83;
+      border-radius: 6px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    button:hover,
+    button:focus {
+      background: #5a2a83;
       color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease;
     }
 
-    button:hover {
-      background: var(--lilas);
+    .toggle-form {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+      color: #5a2a83;
     }
 
-    .toggle {
-      margin-top: 16px;
-      font-size: 0.9rem;
-    }
-
-    .toggle a {
-      color: var(--roxo);
-      cursor: pointer;
-      font-weight: bold;
+    .toggle-form a {
+      color: #5a2a83;
       text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s;
     }
 
-    .logo {
-      max-width: 150px;
-      margin-bottom: 20px;
+    .toggle-form a:hover {
+      color: #7c46b3;
     }
 
-    .error {
-      color: red;
-      margin-bottom: 10px;
+    /* Esconde formulário que não está ativo */
+    .form-container {
+      display: none;
     }
 
-    .success {
-      color: green;
+    /* Mostra o formulário ativo */
+    .form-container.active {
+      display: block;
     }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <img src="logo.png" alt="Logo Home Cheff" class="logo" />
-    <h2 id="form-title">Entrar</h2>
-    <div id="error-message" class="error"></div>
-    <input type="email" id="email" placeholder="E-mail" required />
-    <input type="password" id="password" placeholder="Senha" required />
-    <button onclick="handleSubmit()">Entrar</button>
-    <div class="toggle">
-      <span id="toggle-text">Ainda não tem conta? <a onclick="toggleForm()">Cadastre-se</a></span>
+    <h2 id="titulo-form">Entrar</h2>
+
+    <!-- Formulário Login -->
+    <div id="form-login" class="form-container active">
+      <input type="email" id="email-login" placeholder="Email" required />
+      <input type="password" id="senha-login" placeholder="Senha" required />
+      <button onclick="login()">Entrar</button>
+      <div class="toggle-form">
+        Ainda não tem cadastro? <a onclick="mostrarCadastro()">Cadastrar-se</a>
+      </div>
+    </div>
+
+    <!-- Formulário Cadastro -->
+    <div id="form-cadastro" class="form-container">
+      <input type="email" id="email-cadastro" placeholder="Email" required />
+      <input type="password" id="senha-cadastro" placeholder="Senha" required />
+      <button onclick="cadastrar()">Cadastrar</button>
+      <div class="toggle-form">
+        Já tem uma conta? <a onclick="mostrarLogin()">Entrar</a>
+      </div>
     </div>
   </div>
 
+  <!-- Script Supabase e JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const supabase = supabase.createClient(
-      'https://ytztgkuzvdmlnbzelmct.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0enRna3V6dmRtbG5iemVsbWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwODAyODEsImV4cCI6MjA2NDY1NjI4MX0.UFLTaoKbkenLhL_xu8Zdi3Zv73qR0t9M-KE_Jym4r3k'
-    );
+    // Configura o Supabase
+    const supabaseUrl = 'https://SEU-PROJETO.supabase.co'; // substitua pelo seu
+    const supabaseKey = 'SUA-CHAVE-ANON'; // substitua pela sua
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    let isLogin = true;
-
-    function toggleForm() {
-      isLogin = !isLogin;
-      document.getElementById('form-title').textContent = isLogin ? 'Entrar' : 'Cadastrar';
-      document.querySelector('button').textContent = isLogin ? 'Entrar' : 'Cadastrar';
-      document.getElementById('toggle-text').innerHTML = isLogin
-        ? 'Ainda não tem conta? <a onclick="toggleForm()">Cadastre-se</a>'
-        : 'Já tem conta? <a onclick="toggleForm()">Entrar</a>';
-      document.getElementById('error-message').textContent = '';
+    // Funções para alternar os formulários
+    function mostrarCadastro() {
+      document.getElementById('form-login').classList.remove('active');
+      document.getElementById('form-cadastro').classList.add('active');
+      document.getElementById('titulo-form').textContent = 'Cadastrar-se';
     }
 
-    async function handleSubmit() {
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const errorDiv = document.getElementById('error-message');
+    function mostrarLogin() {
+      document.getElementById('form-cadastro').classList.remove('active');
+      document.getElementById('form-login').classList.add('active');
+      document.getElementById('titulo-form').textContent = 'Entrar';
+    }
 
-      if (!email || !password) {
-        errorDiv.textContent = 'Preencha todos os campos.';
-        return;
-      }
+    // Função login com Supabase
+    async function login() {
+      const email = document.getElementById('email-login').value;
+      const senha = document.getElementById('senha-login').value;
 
-      errorDiv.textContent = '';
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: senha,
+      });
 
-      if (isLogin) {
-        const { error, data } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) {
-          errorDiv.textContent = error.message;
-        } else {
-          window.location.href = 'index.html'; // redireciona para a página principal
-        }
+      if (error) {
+        alert('Erro no login: ' + error.message);
       } else {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) {
-          errorDiv.textContent = error.message;
-        } else {
-          errorDiv.style.color = 'green';
-          errorDiv.textContent = 'Cadastro realizado! Verifique seu e-mail para confirmar.';
-        }
+        alert('Login realizado com sucesso!');
+        // Redirecione para a página principal, se quiser
+        // window.location.href = '/dashboard.html';
+      }
+    }
+
+    // Função cadastro com Supabase
+    async function cadastrar() {
+      const email = document.getElementById('email-cadastro').value;
+      const senha = document.getElementById('senha-cadastro').value;
+
+      const { error } = await supabase.auth.signUp({
+        email: email,
+        password: senha,
+      });
+
+      if (error) {
+        alert('Erro no cadastro: ' + error.message);
+      } else {
+        alert('Cadastro realizado com sucesso! Verifique seu e-mail para confirmar.');
+        mostrarLogin();
       }
     }
   </script>
+
 </body>
 </html>
+
