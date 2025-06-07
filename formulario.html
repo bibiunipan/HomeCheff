@@ -60,30 +60,6 @@
       border-bottom: 2px solid var(--roxo);
     }
 
-    /* Botão login container */
-    .login-btn-container {
-      text-align: center;
-      margin: 10px 0;
-    }
-
-    .login-btn-container button {
-      width: 150px;
-      background: var(--roxo);
-      color: var(--branco);
-      border: none;
-      padding: 12px 0;
-      border-radius: 30px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(108, 74, 182, 0.3);
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    .login-btn-container button:hover {
-      background: var(--lilas);
-      transform: scale(1.05);
-    }
-
     .chat-area {
       padding: 20px;
       display: flex;
@@ -180,9 +156,30 @@
       transform: scale(1.05);
     }
 
+    .login-link {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .login-link a {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: var(--roxo);
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .login-link a:hover {
+      background-color: var(--lilas);
+    }
+
     .chat-area::-webkit-scrollbar {
       width: 8px;
     }
+
     .chat-area::-webkit-scrollbar-thumb {
       background: var(--roxo);
       border-radius: 4px;
@@ -202,24 +199,21 @@
       <img src="logo.png" alt="Logo HomeChef" class="logo" />
     </div>
     <div class="welcome-msg">Bem-vindo ao Home Cheff!</div>
-
-    <!-- Botão Login -->
-    <div class="login-btn-container">
-      <button id="btnLogin">Login</button>
-    </div>
-
     <div class="chat-area" id="chatArea"></div>
+
+    <!-- Botão de login -->
+    <div class="login-link">
+      <p style="font-size: 0.9rem; color: var(--roxo);">Já tem uma conta?</p>
+      <a href="login.html">Fazer Login</a>
+    </div>
   </div>
 
   <script>
     const chatArea = document.getElementById('chatArea');
-
-    // Estado da conversa
     let etapa = 0;
     let buscaEscolhida = '';
     let valorBusca = '';
 
-    // Função para criar bolha no chat
     function criarBolha(texto, classe) {
       const bubble = document.createElement('div');
       bubble.classList.add('bubble', classe);
@@ -229,7 +223,6 @@
       return bubble;
     }
 
-    // Função para criar botões de opção
     function criarOpcoes(opcoes) {
       const div = document.createElement('div');
       div.classList.add('options');
@@ -245,7 +238,6 @@
       return div;
     }
 
-    // Função para criar input de texto ou número
     function criarInput(tipo) {
       const div = document.createElement('div');
       div.classList.add('input-area');
@@ -267,7 +259,6 @@
       return div;
     }
 
-    // Iniciar conversa
     function iniciarChat() {
       criarBolha("Como você quer buscar sua receita hoje?", 'bot');
       criarOpcoes([
@@ -277,13 +268,9 @@
       ]);
     }
 
-    // Quando escolhe uma opção
     function escolherOpcao(valor) {
       buscaEscolhida = valor;
-
-      // Remove os botões de opção
-      const opcoes = document.querySelectorAll('.options');
-      opcoes.forEach(el => el.remove());
+      document.querySelectorAll('.options').forEach(el => el.remove());
 
       criarBolha(`Você escolheu buscar por ${valor === 'nome' ? 'Nome' : valor === 'ingredientes' ? 'Ingredientes' : 'Tempo'}.`, 'user');
 
@@ -296,7 +283,6 @@
       }
     }
 
-    // Quando clica enviar no input
     function enviarInput() {
       const input = document.getElementById('inputBusca');
       if (!input || !input.value.trim()) {
@@ -304,18 +290,11 @@
         return;
       }
       valorBusca = input.value.trim();
-
-      // Remove input e botão enviar
-      const inputArea = input.parentElement;
-      inputArea.remove();
-
+      input.parentElement.remove();
       criarBolha(valorBusca, 'user');
-
-      // Aqui você pode chamar a API com fetch e mostrar resultado
       buscarReceitasAPI(buscaEscolhida, valorBusca);
     }
 
-    // Exemplo: função que chama a API (você adapta para seu backend)
     async function buscarReceitasAPI(filtro, valor) {
       criarBolha('Buscando receitas...', 'bot');
 
@@ -323,29 +302,39 @@
         const resp = await fetch(`http://localhost:8000/buscar-receitas?filtro=${filtro}&valor=${encodeURIComponent(valor)}`);
         if (!resp.ok) throw new Error('Erro na busca');
         const receitas = await resp.json();
-
-        // Remove mensagem "Buscando receitas..."
-        const mensagens = document.querySelectorAll('.bubble.bot');
-        mensagens[mensagens.length - 1].remove();
+        document.querySelectorAll('.bubble.bot').at(-1)?.remove();
 
         if (receitas.length === 0) {
           criarBolha('Nenhuma receita encontrada.', 'bot');
-          return;
+        } else {
+          criarBolha('Aqui estão as receitas encontradas:', 'bot');
+          receitas.forEach(r => {
+            const receitaDiv = document.createElement('div');
+            receitaDiv.className = 'bubble bot';
+            receitaDiv.style.cursor = 'pointer';
+            receitaDiv.style.background = 'var(--lilas)';
+            receitaDiv.style.color = 'var(--roxo)';
+            receitaDiv.style.borderRadius = '15px';
+            receitaDiv.style.marginTop = '6px';
+            receitaDiv.style.fontWeight = '600';
+            receitaDiv.textContent = r.nome;
+            receitaDiv.onclick = () => mostrarDetalhes(r);
+            chatArea.appendChild(receitaDiv);
+          });
+          chatArea.scrollTop = chatArea.scrollHeight;
         }
-
-        criarBolha('Receitas encontradas:', 'bot');
-        receitas.forEach(r => criarBolha(`- ${r.nome}`, 'bot'));
-      } catch (error) {
-        criarBolha('Erro ao buscar receitas.', 'bot');
+      } catch (e) {
+        criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
       }
     }
 
-    // Evento do botão Login
-    document.getElementById('btnLogin').addEventListener('click', () => {
-      window.location.href = 'login.html?next=index.html';
-    });
+    function mostrarDetalhes(receita) {
+      criarBolha(`Detalhes da receita: ${receita.nome}`, 'user');
+      criarBolha(`Ingredientes: ${receita.ingredientes.join(', ')}`, 'bot');
+      criarBolha(`Tempo de preparo: ${receita.tempo} minutos`, 'bot');
+      criarBolha(`Modo de preparo: ${receita.modo_preparo}`, 'bot');
+    }
 
-    // Começa o chat
     iniciarChat();
   </script>
 </body>
