@@ -215,6 +215,8 @@
   if (!userError) {
     // Salva o nome no localStorage
     localStorage.setItem('nomeUsuario', userData.nome);
+    location.reload(); // para recarregar e atualizar a interface
+
   }
 
   window.location.href = 'formulario.html'; // Redireciona após login
