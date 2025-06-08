@@ -188,6 +188,7 @@
       }
     });
   });
+
   document.getElementById('show-signup').addEventListener('click', () => {
     loginForm.classList.add('hidden');
     signupForm.classList.remove('hidden');
@@ -203,23 +204,26 @@
     const password = document.getElementById('login-password').value;
 
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
     if (error) {
-  document.getElementById('login-error').textContent = error.message;
-} else {
-  const { data: userData, error: userError } = await supabaseClient
-    .from('usuarios')
-    .select('nome')
-    .eq('id', data.user.id)
-    .single();
+      document.getElementById('login-error').textContent = error.message;
+    } else {
+      // Busca nome na tabela 'usuarios' e salva no localStorage
+      const { data: userData, error: userError } = await supabaseClient
+        .from('usuarios')
+        .select('nome')
+        .eq('id', data.user.id)
+        .single();
 
-  if (!userError) {
-    // Salva o nome no localStorage
-    localStorage.setItem('nomeUsuario', userData.nome);
-  }
+      if (!userError && userData?.nome) {
+        localStorage.setItem('nomeUsuario', userData.nome);
+      } else {
+        localStorage.removeItem('nomeUsuario'); // Caso não tenha nome
+      }
 
-  window.location.href = 'formulario.html'; // Redireciona após login
+      window.location.href = 'formulario.html';
     }
-});
+  });
 
   document.getElementById('signup-btn').addEventListener('click', async () => {
     const nome = document.getElementById('signup-nome').value;
@@ -228,15 +232,19 @@
     const restricoes = [...restricoesSelecionadas];
     if (restricoes.includes('nenhuma')) restricoes.length = 0;
 
-    // Primeiro cria o usuário no Supabase Auth
-    const { data: signupData, error: signupError } = await supabaseClient.auth.signUp({ email, password });
+    const { data: signupData, error: signupError } = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { nome }
+      }
+    });
 
     if (signupError) {
       document.getElementById('signup-error').textContent = signupError.message;
       return;
     }
 
-    // Loga automaticamente para garantir a sessão e pegar o user.id
     const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({ email, password });
 
     if (loginError) {
@@ -246,7 +254,6 @@
 
     const userId = loginData.user.id;
 
-    // Insere dados extras na tabela 'usuarios'
     const { error: insertError } = await supabaseClient.from('usuarios').insert([{
       id: userId,
       email,
