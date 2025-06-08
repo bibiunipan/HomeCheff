@@ -211,41 +211,50 @@
       }
     });
 
-    document.getElementById('signup-btn').addEventListener('click', async () => {
-      const nome = document.getElementById('signup-nome').value;
-      const email = document.getElementById('signup-email').value;
-      const password = document.getElementById('signup-password').value;
-      const restricoes = [...restricoesSelecionadas];
-      if (restricoes.includes('nenhuma')) restricoes.length = 0;
+    <script>
+  // ... código anterior permanece igual ...
 
-      // Criar usuário no Supabase Auth
-      const { data, error } = await supabaseClient.auth.signUp({ email, password });
+  document.getElementById('signup-btn').addEventListener('click', async () => {
+    const nome = document.getElementById('signup-nome').value;
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    const restricoes = [...restricoesSelecionadas];
+    if (restricoes.includes('nenhuma')) restricoes.length = 0;
 
-      if (error) {
-        document.getElementById('signup-error').textContent = error.message;
-        return;
-      }
+    // Cria o usuário no Supabase Auth
+    const { data: signupData, error: signupError } = await supabaseClient.auth.signUp({ email, password });
 
-      // Pega o id do usuário criado
-      const userId = data.user?.id;
+    if (signupError) {
+      document.getElementById('signup-error').textContent = signupError.message;
+      return;
+    }
 
-      // Salva os dados extras na tabela 'usuarios'
-      const { error: insertError } = await supabaseClient.from('usuarios').insert([{
-        id: userId,
-        email,
-        nome,
-        restricoes
-      }]);
+    // Garante que o usuário foi criado e obtém o ID corretamente
+    const { data: sessionData, error: userError } = await supabaseClient.auth.getUser();
+    const userId = sessionData?.user?.id;
 
-      if (insertError) {
-        document.getElementById('signup-error').textContent = insertError.message;
-      } else {
-        document.getElementById('signup-success').textContent = 'Cadastro realizado com sucesso! Faça login.';
-        signupForm.classList.add('hidden');
-        loginForm.classList.remove('hidden');
-      }
-    });
-  </script>
+    if (!userId) {
+      document.getElementById('signup-error').textContent = 'Erro ao obter ID do usuário. Tente novamente.';
+      return;
+    }
+
+    // Insere dados extras na tabela 'usuarios'
+    const { error: insertError } = await supabaseClient.from('usuarios').insert([{
+      id: userId,
+      email,
+      nome,
+      restricoes
+    }]);
+
+    if (insertError) {
+      document.getElementById('signup-error').textContent = insertError.message;
+    } else {
+      document.getElementById('signup-success').textContent = 'Cadastro realizado com sucesso! Faça login.';
+      signupForm.classList.add('hidden');
+      loginForm.classList.remove('hidden');
+    }
+  });
+</script>
 </body>
 </html>
 
