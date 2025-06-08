@@ -200,33 +200,31 @@
   });
 
   document.getElementById('login-btn').addEventListener('click', async () => {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
 
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-    if (error) {
-      document.getElementById('login-error').textContent = error.message;
-    } else {
-      const userId = data.user.id;
+  if (error) {
+    document.getElementById('login-error').textContent = error.message;
+  } else {
+    const userId = data.user.id;
 
-      const { data: userData, error: userError } = await supabaseClient
-        .from('usuarios')
-        .select('nome')
-        .eq('id', userId)
-        .single();
+    // Agora busca o nome e restrições na tabela "usuarios"
+    const { data: userData, error: userError } = await supabaseClient
+      .from('usuarios')
+      .select('nome, restricoes')
+      .eq('id', userId)
+      .single();
 
-      if (userError) {
-        console.log('Erro ao buscar nome:', userError);
-        localStorage.removeItem('nomeUsuario');
-      } else {
-        localStorage.setItem('nomeUsuario', userData.nome);
-        console.log('Nome salvo no localStorage:', userData.nome);
-      }
-
-      window.location.href = 'formulario.html';
+    if (!userError) {
+      localStorage.setItem('nomeUsuario', userData.nome);
+      localStorage.setItem('restricoesUsuario', JSON.stringify(userData.restricoes));
     }
-  });
+
+    window.location.href = 'formulario.html';
+  }
+});
 
   document.getElementById('signup-btn').addEventListener('click', async () => {
     const nome = document.getElementById('signup-nome').value;
