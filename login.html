@@ -155,64 +155,61 @@
     </div>
   </div>
 
-  <script>
-    const supabaseClient = supabase.createClient(
-      'https://ytztgkuzvdmlnbzelmct.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0enRna3V6dmRtbG5iemVsbWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwODAyODEsImV4cCI6MjA2NDY1NjI4MX0.UFLTaoKbkenLhL_xu8Zdi3Zv73qR0t9M-KE_Jym4r3k'
-    );
+ <script>
+  const supabaseClient = supabase.createClient(
+    'https://ytztgkuzvdmlnbzelmct.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0enRna3V6dmRtbG5iemVsbWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwODAyODEsImV4cCI6MjA2NDY1NjI4MX0.UFLTaoKbkenLhL_xu8Zdi3Zv73qR0t9M-KE_Jym4r3k'
+  );
 
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
-    const restricaoButtons = document.querySelectorAll('.restricao-btn');
-    const restricoesSelecionadas = new Set();
+  const loginForm = document.getElementById('login-form');
+  const signupForm = document.getElementById('signup-form');
+  const restricaoButtons = document.querySelectorAll('.restricao-btn');
+  const restricoesSelecionadas = new Set();
 
-    restricaoButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const valor = button.dataset.value;
-        if (valor === 'nenhuma') {
-          restricoesSelecionadas.clear();
-          restricaoButtons.forEach(btn => btn.classList.remove('active'));
-          button.classList.add('active');
-          restricoesSelecionadas.add('nenhuma');
-        } else {
-          restricoesSelecionadas.delete('nenhuma');
-          document.querySelector('[data-value="nenhuma"]').classList.remove('active');
-
-          if (restricoesSelecionadas.has(valor)) {
-            restricoesSelecionadas.delete(valor);
-            button.classList.remove('active');
-          } else {
-            restricoesSelecionadas.add(valor);
-            button.classList.add('active');
-          }
-        }
-      });
-    });
-
-    document.getElementById('show-signup').addEventListener('click', () => {
-      loginForm.classList.add('hidden');
-      signupForm.classList.remove('hidden');
-    });
-
-    document.getElementById('show-login').addEventListener('click', () => {
-      signupForm.classList.add('hidden');
-      loginForm.classList.remove('hidden');
-    });
-
-    document.getElementById('login-btn').addEventListener('click', async () => {
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      if (error) {
-        document.getElementById('login-error').textContent = error.message;
+  restricaoButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const valor = button.dataset.value;
+      if (valor === 'nenhuma') {
+        restricoesSelecionadas.clear();
+        restricaoButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        restricoesSelecionadas.add('nenhuma');
       } else {
-        window.location.href = 'formulario.html'; // Redireciona após login
+        restricoesSelecionadas.delete('nenhuma');
+        document.querySelector('[data-value="nenhuma"]').classList.remove('active');
+
+        if (restricoesSelecionadas.has(valor)) {
+          restricoesSelecionadas.delete(valor);
+          button.classList.remove('active');
+        } else {
+          restricoesSelecionadas.add(valor);
+          button.classList.add('active');
+        }
       }
     });
+  });
 
-    <script>
-  // ... código anterior permanece igual ...
+  document.getElementById('show-signup').addEventListener('click', () => {
+    loginForm.classList.add('hidden');
+    signupForm.classList.remove('hidden');
+  });
+
+  document.getElementById('show-login').addEventListener('click', () => {
+    signupForm.classList.add('hidden');
+    loginForm.classList.remove('hidden');
+  });
+
+  document.getElementById('login-btn').addEventListener('click', async () => {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+      document.getElementById('login-error').textContent = error.message;
+    } else {
+      window.location.href = 'formulario.html'; // Redireciona após login
+    }
+  });
 
   document.getElementById('signup-btn').addEventListener('click', async () => {
     const nome = document.getElementById('signup-nome').value;
