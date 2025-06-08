@@ -205,11 +205,21 @@
 
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (error) {
-      document.getElementById('login-error').textContent = error.message;
-    } else {
-      window.location.href = 'formulario.html'; // Redireciona após login
-    }
-  });
+  document.getElementById('login-error').textContent = error.message;
+} else {
+  const { data: userData, error: userError } = await supabaseClient
+    .from('usuarios')
+    .select('nome')
+    .eq('id', data.user.id)
+    .single();
+
+  if (!userError) {
+    // Salva o nome no localStorage
+    localStorage.setItem('nomeUsuario', userData.nome);
+  }
+
+  window.location.href = 'formulario.html'; // Redireciona após login
+});
 
   document.getElementById('signup-btn').addEventListener('click', async () => {
     const nome = document.getElementById('signup-nome').value;
