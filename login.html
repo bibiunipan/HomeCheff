@@ -208,17 +208,20 @@
     if (error) {
       document.getElementById('login-error').textContent = error.message;
     } else {
-      // Busca nome na tabela 'usuarios' e salva no localStorage
+      const userId = data.user.id;
+
       const { data: userData, error: userError } = await supabaseClient
         .from('usuarios')
         .select('nome')
-        .eq('id', data.user.id)
+        .eq('id', userId)
         .single();
 
-      if (!userError && userData?.nome) {
-        localStorage.setItem('nomeUsuario', userData.nome);
+      if (userError) {
+        console.log('Erro ao buscar nome:', userError);
+        localStorage.removeItem('nomeUsuario');
       } else {
-        localStorage.removeItem('nomeUsuario'); // Caso não tenha nome
+        localStorage.setItem('nomeUsuario', userData.nome);
+        console.log('Nome salvo no localStorage:', userData.nome);
       }
 
       window.location.href = 'formulario.html';
@@ -236,7 +239,7 @@
       email,
       password,
       options: {
-        data: { nome }
+        data: { nome } // Salva no user_metadata
       }
     });
 
@@ -245,6 +248,7 @@
       return;
     }
 
+    // login após cadastro
     const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({ email, password });
 
     if (loginError) {
@@ -254,16 +258,14 @@
 
     const userId = loginData.user.id;
 
-    const { error: insertError } = await supabaseClient.from('usuarios').insert([{
-      id: userId,
-      email,
-      nome,
-      restricoes
-    }]);
+    const { error: insertError } = await supabaseClient
+      .from('usuarios')
+      .insert([{ id: userId, email, nome, restricoes }]);
 
     if (insertError) {
       document.getElementById('signup-error').textContent = insertError.message;
     } else {
+      localStorage.setItem('nomeUsuario', nome); // Salva direto ao cadastrar
       document.getElementById('signup-success').textContent = 'Cadastro realizado com sucesso! Faça login.';
       signupForm.classList.add('hidden');
       loginForm.classList.remove('hidden');
