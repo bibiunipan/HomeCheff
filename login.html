@@ -156,111 +156,154 @@
   </div>
 
 <script>
-  const supabaseClient = supabase.createClient(
-    'https://ytztgkuzvdmlnbzelmct.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0enRna3V6dmRtbG5iemVsbWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwODAyODEsImV4cCI6MjA2NDY1NjI4MX0.UFLTaoKbkenLhL_xu8Zdi3Zv73qR0t9M-KE_Jym4r3k'
-  );
+  document.addEventListener('DOMContentLoaded', () => {
+    const chatArea = document.getElementById('chatArea');
+    const welcomeMsg = document.getElementById('welcomeMsg');
+    const loginLink = document.getElementById('loginLink');
+    const logoutLink = document.getElementById('logoutLink');
+    const btnLogout = document.getElementById('btnLogout');
 
-  const loginForm = document.getElementById('login-form');
-  const signupForm = document.getElementById('signup-form');
-  const restricaoButtons = document.querySelectorAll('.restricao-btn');
-  const restricoesSelecionadas = new Set();
+    // Verifica se o nome do usuário está salvo
+    const userName = localStorage.getItem('userName');
 
-  restricaoButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const valor = button.dataset.value;
-      if (valor === 'nenhuma') {
-        restricoesSelecionadas.clear();
-        restricaoButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-        restricoesSelecionadas.add('nenhuma');
+    if (userName) {
+      welcomeMsg.textContent = `Bem-vindo, ${userName} ao Home Cheff!`;
+      loginLink.style.display = 'none';
+      logoutLink.style.display = 'block';
+    }
+
+    btnLogout.onclick = () => {
+      localStorage.removeItem('userName');
+      location.reload();
+    };
+
+    // Resto do seu código (chat)
+    let etapa = 0;
+    let buscaEscolhida = '';
+    let valorBusca = '';
+
+    function criarBolha(texto, classe) {
+      const bubble = document.createElement('div');
+      bubble.classList.add('bubble', classe);
+      bubble.textContent = texto;
+      chatArea.appendChild(bubble);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      return bubble;
+    }
+
+    function criarOpcoes(opcoes) {
+      const div = document.createElement('div');
+      div.classList.add('options');
+      opcoes.forEach(op => {
+        const btn = document.createElement('button');
+        btn.textContent = op.label;
+        btn.className = 'option-btn';
+        btn.onclick = () => escolherOpcao(op.value);
+        div.appendChild(btn);
+      });
+      chatArea.appendChild(div);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      return div;
+    }
+
+    function criarInput(tipo) {
+      const div = document.createElement('div');
+      div.classList.add('input-area');
+      const input = document.createElement('input');
+      input.type = tipo;
+      input.placeholder = tipo === 'text' ? 'Digite aqui...' : 'Número em minutos';
+      input.id = 'inputBusca';
+      div.appendChild(input);
+
+      const btnEnviar = document.createElement('button');
+      btnEnviar.className = 'send-btn';
+      btnEnviar.textContent = 'Enviar';
+      btnEnviar.onclick = () => enviarInput();
+      div.appendChild(btnEnviar);
+
+      chatArea.appendChild(div);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      input.focus();
+      return div;
+    }
+
+    function iniciarChat() {
+      criarBolha("Como você quer buscar sua receita hoje?", 'bot');
+      criarOpcoes([
+        { label: 'Por Nome', value: 'nome' },
+        { label: 'Por Ingredientes', value: 'ingredientes' },
+        { label: 'Por Tempo', value: 'tempo' },
+      ]);
+    }
+
+    function escolherOpcao(valor) {
+      buscaEscolhida = valor;
+      document.querySelectorAll('.options').forEach(el => el.remove());
+
+      criarBolha(`Você escolheu buscar por ${valor === 'nome' ? 'Nome' : valor === 'ingredientes' ? 'Ingredientes' : 'Tempo'}.`, 'user');
+
+      if (valor === 'tempo') {
+        criarBolha("Digite o tempo máximo de preparo em minutos:", 'bot');
+        criarInput('number');
       } else {
-        restricoesSelecionadas.delete('nenhuma');
-        document.querySelector('[data-value="nenhuma"]').classList.remove('active');
-
-        if (restricoesSelecionadas.has(valor)) {
-          restricoesSelecionadas.delete(valor);
-          button.classList.remove('active');
-        } else {
-          restricoesSelecionadas.add(valor);
-          button.classList.add('active');
-        }
+        criarBolha("Digite o nome da receita para a busca:", 'bot');
+        criarInput('text');
       }
-    });
-  });
-  document.getElementById('show-signup').addEventListener('click', () => {
-    loginForm.classList.add('hidden');
-    signupForm.classList.remove('hidden');
-  });
-
-  document.getElementById('show-login').addEventListener('click', () => {
-    signupForm.classList.add('hidden');
-    loginForm.classList.remove('hidden');
-  });
-
-  document.getElementById('login-btn').addEventListener('click', async () => {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (error) {
-  document.getElementById('login-error').textContent = error.message;
-} else {
-  const { data: userData, error: userError } = await supabaseClient
-    .from('usuarios')
-    .select('nome')
-    .eq('id', data.user.id)
-    .single();
-
-  if (!userError) {
-    // Salva o nome no localStorage
-    localStorage.setItem('nomeUsuario', userData.nome);
-  }
-
-  window.location.href = 'formulario.html'; // Redireciona após login
-    }
-});
-
-  document.getElementById('signup-btn').addEventListener('click', async () => {
-    const nome = document.getElementById('signup-nome').value;
-    const email = document.getElementById('signup-email').value;
-    const password = document.getElementById('signup-password').value;
-    const restricoes = [...restricoesSelecionadas];
-    if (restricoes.includes('nenhuma')) restricoes.length = 0;
-
-    // Primeiro cria o usuário no Supabase Auth
-    const { data: signupData, error: signupError } = await supabaseClient.auth.signUp({ email, password });
-
-    if (signupError) {
-      document.getElementById('signup-error').textContent = signupError.message;
-      return;
     }
 
-    // Loga automaticamente para garantir a sessão e pegar o user.id
-    const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-    if (loginError) {
-      document.getElementById('signup-error').textContent = loginError.message;
-      return;
+    function enviarInput() {
+      const input = document.getElementById('inputBusca');
+      if (!input || !input.value.trim()) {
+        alert('Por favor, preencha o campo.');
+        return;
+      }
+      valorBusca = input.value.trim();
+      input.parentElement.remove();
+      criarBolha(valorBusca, 'user');
+      buscarReceitasAPI(buscaEscolhida, valorBusca);
     }
 
-    const userId = loginData.user.id;
+    async function buscarReceitasAPI(filtro, valor) {
+      criarBolha('Buscando receitas...', 'bot');
 
-    // Insere dados extras na tabela 'usuarios'
-    const { error: insertError } = await supabaseClient.from('usuarios').insert([{
-      id: userId,
-      email,
-      nome,
-      restricoes
-    }]);
+      try {
+        const resp = await fetch(`http://localhost:8000/buscar-receitas?filtro=${filtro}&valor=${encodeURIComponent(valor)}`);
+        if (!resp.ok) throw new Error('Erro na busca');
+        const receitas = await resp.json();
+        document.querySelectorAll('.bubble.bot').at(-1)?.remove();
 
-    if (insertError) {
-      document.getElementById('signup-error').textContent = insertError.message;
-    } else {
-      document.getElementById('signup-success').textContent = 'Cadastro realizado com sucesso! Faça login.';
-      signupForm.classList.add('hidden');
-      loginForm.classList.remove('hidden');
+        if (receitas.length === 0) {
+          criarBolha('Nenhuma receita encontrada.', 'bot');
+        } else {
+          criarBolha('Aqui estão as receitas encontradas:', 'bot');
+          receitas.forEach(r => {
+            const receitaDiv = document.createElement('div');
+            receitaDiv.className = 'bubble bot';
+            receitaDiv.style.cursor = 'pointer';
+            receitaDiv.style.background = 'var(--lilas)';
+            receitaDiv.style.color = 'var(--roxo)';
+            receitaDiv.style.borderRadius = '15px';
+            receitaDiv.style.marginTop = '6px';
+            receitaDiv.style.fontWeight = '600';
+            receitaDiv.textContent = r.nome;
+            receitaDiv.onclick = () => mostrarDetalhes(r);
+            chatArea.appendChild(receitaDiv);
+          });
+          chatArea.scrollTop = chatArea.scrollHeight;
+        }
+      } catch (e) {
+        criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
+      }
     }
+
+    function mostrarDetalhes(receita) {
+      criarBolha(`Detalhes da receita: ${receita.nome}`, 'user');
+      criarBolha(`Ingredientes: ${receita.ingredientes.join(', ')}`, 'bot');
+      criarBolha(`Tempo de preparo: ${receita.tempo} minutos`, 'bot');
+      criarBolha(`Modo de preparo: ${receita.modo_preparo}`, 'bot');
+    }
+
+    iniciarChat();
   });
 </script>
 </body>
