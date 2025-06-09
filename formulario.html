@@ -341,7 +341,7 @@
     criarBolha('Buscando receitas...', 'bot');
 
     try {
-      const resp = await fetch(`https://homecheff-backend.onrender.com/buscar-receitas?filtro=${filtro}&valor=${encodeURIComponent(valor)}`);
+      const resp = await fetch(`https://homecheff-backend.onrender.com/buscar_receitas?filtro=${filtro}&valor=${encodeURIComponent(valor)}`);
       if (!resp.ok) throw new Error('Erro na busca');
       const receitas = await resp.json();
       document.querySelectorAll('.bubble.bot').at(-1)?.remove();
