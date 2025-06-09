@@ -338,45 +338,48 @@
   }
 
   async function buscarReceitasAPI(filtro, valor) {
-    criarBolha('Buscando receitas...', 'bot');
+  criarBolha('Buscando receitas...', 'bot');
 
-    try {
-      const resp = await fetch(`https://homecheff-backend.onrender.com/buscar_receitas?filtro=${filtro}&valor=${encodeURIComponent(valor)}`);
-      if (!resp.ok) throw new Error('Erro na busca');
-      const receitas = await resp.json();
-      document.querySelectorAll('.bubble.bot').at(-1)?.remove();
+  try {
+    const resp = await fetch(`https://homecheff-backend.onrender.com/buscar_receitas?filtro=${filtro}&valor=${encodeURIComponent(valor)}`);
+    if (!resp.ok) throw new Error('Erro na busca');
+    const receitas = await resp.json();
+    document.querySelectorAll('.bubble.bot').at(-1)?.remove();
 
-      if (receitas.length === 0) {
-        criarBolha('Nenhuma receita encontrada.', 'bot');
-      } else {
-        criarBolha('Aqui estão as receitas encontradas:', 'bot');
-        receitas.forEach(r => {
-          const receitaDiv = document.createElement('div');
-          receitaDiv.className = 'bubble bot';
-          receitaDiv.style.cursor = 'pointer';
-          receitaDiv.style.background = 'var(--lilas)';
-          receitaDiv.style.color = 'var(--roxo)';
-          receitaDiv.style.borderRadius = '15px';
-          receitaDiv.style.marginTop = '6px';
-          receitaDiv.style.fontWeight = '600';
-          receitaDiv.textContent = r.nome;
-          receitaDiv.onclick = () => mostrarDetalhes(r);
-          chatArea.appendChild(receitaDiv);
-        });
-        chatArea.scrollTop = chatArea.scrollHeight;
-      }
-    } catch (e) {
-      criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
+    if (receitas.length === 0) {
+      criarBolha('Nenhuma receita encontrada.', 'bot');
+      
+      const reiniciarBtn = document.createElement('button');
+      reiniciarBtn.textContent = 'Reiniciar busca';
+      reiniciarBtn.className = 'option-btn';
+      reiniciarBtn.style.marginTop = '10px';
+      reiniciarBtn.onclick = () => {
+        chatArea.innerHTML = '';
+        iniciarChat();
+      };
+      chatArea.appendChild(reiniciarBtn);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    } else {
+      criarBolha('Aqui estão as receitas encontradas:', 'bot');
+      receitas.forEach(r => {
+        const receitaDiv = document.createElement('div');
+        receitaDiv.className = 'bubble bot';
+        receitaDiv.style.cursor = 'pointer';
+        receitaDiv.style.background = 'var(--lilas)';
+        receitaDiv.style.color = 'var(--roxo)';
+        receitaDiv.style.borderRadius = '15px';
+        receitaDiv.style.marginTop = '6px';
+        receitaDiv.style.fontWeight = '600';
+        receitaDiv.textContent = r.nome;
+        receitaDiv.onclick = () => mostrarDetalhes(r);
+        chatArea.appendChild(receitaDiv);
+      });
+      chatArea.scrollTop = chatArea.scrollHeight;
     }
+  } catch (e) {
+    criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
   }
-
-  function mostrarDetalhes(receita) {
-    criarBolha(`Detalhes da receita: ${receita.nome}`, 'user');
-    criarBolha(`Ingredientes: ${receita.ingredientes.join(', ')}`, 'bot');
-    criarBolha(`Tempo de preparo: ${receita.tempo} minutos`, 'bot');
-    criarBolha(`Modo de preparo: ${receita.modo_preparo}`, 'bot');
-  }
-
+}
   iniciarChat();
 </script>
 
