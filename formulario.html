@@ -338,26 +338,45 @@
   }
 
 async function buscarReceitasAPI(filtro, valor) {
-  criarBolha('Buscando receitas...', 'bot');
-  console.log('Iniciando busca:', filtro, valor);
+  let url = "https://homecheff-backend.onrender.com/buscar_receitas?";
+
+  if (filtro === "nome") {
+    url += `nome=${encodeURIComponent(valor)}`;
+  } else if (filtro === "ingrediente") {
+    url += `ingrediente=${encodeURIComponent(valor)}`;
+  } else if (filtro === "tempo") {
+    url += `tempo_max=${encodeURIComponent(valor)}`;
+  } else {
+    throw new Error("Filtro inválido");
+  }
 
   try {
-    const resp = await fetch(`https://homecheff-backend.onrender.com/buscar_receitas?filtro=${filtro}&valor=${encodeURIComponent(valor)}`);
-    console.log('Resposta status:', resp.status);
+    const resp = await fetch(url);
+    if (!resp.ok) {
+      throw new Error(`Erro na busca: ${resp.status} ${resp.statusText}`);
+    }
+    const data = await resp.json();  // já recebe JSON direto, não precisa parsear texto
+    return data;  // É um array de nomes de receitas (strings)
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
-    const textoResp = await resp.text();
-    console.log('Resposta texto:', textoResp);
+async function mostrarReceitas(filtro, valor) {
+  criarBolha('Buscando receitas...', 'bot');
 
-    // tenta converter para JSON depois de logar
-    const receitas = JSON.parse(textoResp);
+  try {
+    const receitasNomes = await buscarReceitasAPI(filtro, valor);
 
     // Remove a bolha "Buscando receitas..."
     document.querySelectorAll('.bubble.bot').forEach(b => {
       if (b.textContent.includes('Buscando receitas')) b.remove();
     });
 
-    if (receitas.length === 0) {
+    if (receitasNomes.length === 0) {
       criarBolha('Nenhuma receita encontrada.', 'bot');
+
       // botão reiniciar busca
       const reiniciarBtn = document.createElement('button');
       reiniciarBtn.textContent = 'Reiniciar busca';
@@ -372,7 +391,8 @@ async function buscarReceitasAPI(filtro, valor) {
 
     } else {
       criarBolha('Aqui estão as receitas encontradas:', 'bot');
-      receitas.forEach(r => {
+
+      receitasNomes.forEach(nomeReceita => {
         const receitaDiv = document.createElement('div');
         receitaDiv.className = 'bubble bot';
         receitaDiv.style.cursor = 'pointer';
@@ -381,9 +401,9 @@ async function buscarReceitasAPI(filtro, valor) {
         receitaDiv.style.borderRadius = '15px';
         receitaDiv.style.marginTop = '6px';
         receitaDiv.style.fontWeight = '600';
-        receitaDiv.textContent = r.nome;
+        receitaDiv.textContent = nomeReceita;
 
-        receitaDiv.onclick = () => mostrarDetalhes(r);
+        receitaDiv.onclick = () => mostrarDetalhes(nomeReceita);
 
         chatArea.appendChild(receitaDiv);
       });
@@ -396,11 +416,11 @@ async function buscarReceitasAPI(filtro, valor) {
   }
 }
 
-async function mostrarDetalhes(receita) {
-  criarBolha(`Buscando detalhes da receita "${receita.nome}"...`, 'bot');
+async function mostrarDetalhes(nomeReceita) {
+  criarBolha(`Buscando detalhes da receita "${nomeReceita}"...`, 'bot');
 
   try {
-    const resp = await fetch(`https://homecheff-backend.onrender.com/detalhes_receita?id=${encodeURIComponent(receita.id)}`);
+    const resp = await fetch(`https://homecheff-backend.onrender.com/detalhes_receita?nome=${encodeURIComponent(nomeReceita)}`);
     if (!resp.ok) throw new Error('Erro ao buscar detalhes');
     const detalhes = await resp.json();
 
@@ -411,10 +431,11 @@ async function mostrarDetalhes(receita) {
 
     criarBolha(`Detalhes da receita "${detalhes.nome}":`, 'bot');
     criarBolha(`- Ingredientes: ${detalhes.ingredientes.join(', ')}`, 'bot');
-    criarBolha(`- Tempo de preparo: ${detalhes.tempo} minutos`, 'bot');
+    criarBolha(`- Tempo de preparo: ${detalhes.tempo_preparo}`, 'bot');
     criarBolha(`- Modo de preparo: ${detalhes.preparo}`, 'bot');
 
   } catch (e) {
+    console.error(e);
     criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
   }
 }
