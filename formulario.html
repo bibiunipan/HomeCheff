@@ -339,11 +339,17 @@
 
 async function buscarReceitasAPI(filtro, valor) {
   criarBolha('Buscando receitas...', 'bot');
+  console.log('Iniciando busca:', filtro, valor);
 
   try {
     const resp = await fetch(`https://homecheff-backend.onrender.com/buscar_receitas?filtro=${filtro}&valor=${encodeURIComponent(valor)}`);
-    if (!resp.ok) throw new Error('Erro na busca');
-    const receitas = await resp.json();
+    console.log('Resposta status:', resp.status);
+
+    const textoResp = await resp.text();
+    console.log('Resposta texto:', textoResp);
+
+    // tenta converter para JSON depois de logar
+    const receitas = JSON.parse(textoResp);
 
     // Remove a bolha "Buscando receitas..."
     document.querySelectorAll('.bubble.bot').forEach(b => {
@@ -352,7 +358,7 @@ async function buscarReceitasAPI(filtro, valor) {
 
     if (receitas.length === 0) {
       criarBolha('Nenhuma receita encontrada.', 'bot');
-      
+      // botão reiniciar busca
       const reiniciarBtn = document.createElement('button');
       reiniciarBtn.textContent = 'Reiniciar busca';
       reiniciarBtn.className = 'option-btn';
@@ -385,6 +391,7 @@ async function buscarReceitasAPI(filtro, valor) {
     }
 
   } catch (e) {
+    console.error('Erro na busca:', e);
     criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
   }
 }
