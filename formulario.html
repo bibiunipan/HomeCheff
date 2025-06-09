@@ -337,14 +337,18 @@
     buscarReceitasAPI(buscaEscolhida, valorBusca);
   }
 
-  async function buscarReceitasAPI(filtro, valor) {
+async function buscarReceitasAPI(filtro, valor) {
   criarBolha('Buscando receitas...', 'bot');
 
   try {
     const resp = await fetch(`https://homecheff-backend.onrender.com/buscar_receitas?filtro=${filtro}&valor=${encodeURIComponent(valor)}`);
     if (!resp.ok) throw new Error('Erro na busca');
     const receitas = await resp.json();
-    document.querySelectorAll('.bubble.bot').at(-1)?.remove();
+
+    // Remove a bolha "Buscando receitas..."
+    document.querySelectorAll('.bubble.bot').forEach(b => {
+      if (b.textContent.includes('Buscando receitas')) b.remove();
+    });
 
     if (receitas.length === 0) {
       criarBolha('Nenhuma receita encontrada.', 'bot');
@@ -359,6 +363,7 @@
       };
       chatArea.appendChild(reiniciarBtn);
       chatArea.scrollTop = chatArea.scrollHeight;
+
     } else {
       criarBolha('Aqui estão as receitas encontradas:', 'bot');
       receitas.forEach(r => {
@@ -371,16 +376,45 @@
         receitaDiv.style.marginTop = '6px';
         receitaDiv.style.fontWeight = '600';
         receitaDiv.textContent = r.nome;
+
         receitaDiv.onclick = () => mostrarDetalhes(r);
+
         chatArea.appendChild(receitaDiv);
       });
       chatArea.scrollTop = chatArea.scrollHeight;
     }
+
   } catch (e) {
     criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
   }
 }
-  iniciarChat();
+
+async function mostrarDetalhes(receita) {
+  criarBolha(`Buscando detalhes da receita "${receita.nome}"...`, 'bot');
+
+  try {
+    const resp = await fetch(`https://homecheff-backend.onrender.com/detalhes_receita?id=${encodeURIComponent(receita.id)}`);
+    if (!resp.ok) throw new Error('Erro ao buscar detalhes');
+    const detalhes = await resp.json();
+
+    // Remove a mensagem de "buscando detalhes"
+    document.querySelectorAll('.bubble.bot').forEach(b => {
+      if (b.textContent.includes('Buscando detalhes')) b.remove();
+    });
+
+    criarBolha(`Detalhes da receita "${detalhes.nome}":`, 'bot');
+    criarBolha(`- Ingredientes: ${detalhes.ingredientes.join(', ')}`, 'bot');
+    criarBolha(`- Tempo de preparo: ${detalhes.tempo} minutos`, 'bot');
+    criarBolha(`- Modo de preparo: ${detalhes.preparo}`, 'bot');
+
+  } catch (e) {
+    criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
+  }
+}
+
+// Chame iniciarChat() depois de declarar as funções
+iniciarChat();
+
 </script>
 
 </body>
