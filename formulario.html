@@ -334,7 +334,7 @@
     valorBusca = input.value.trim();
     input.parentElement.remove();
     criarBolha(valorBusca, 'user');
-    buscarReceitasAPI(buscaEscolhida, valorBusca);
+    mostrarReceitas(buscaEscolhida, valorBusca);
   }
 
 async function buscarReceitasAPI(filtro, valor) {
