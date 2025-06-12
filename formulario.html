@@ -251,8 +251,7 @@
 
   verificarSessao();
 
-  // Chat interativo
-  let etapa = 0;
+  // Variáveis para controle do chat
   let buscaEscolhida = '';
   let valorBusca = '';
 
@@ -312,6 +311,7 @@
 
   function escolherOpcao(valor) {
     buscaEscolhida = valor;
+    // Remove as opções para evitar cliques duplicados
     document.querySelectorAll('.options').forEach(el => el.remove());
 
     criarBolha(`Você escolheu buscar por ${valor === 'nome' ? 'Nome' : valor === 'ingredientes' ? 'Ingredientes' : 'Tempo'}.`, 'user');
@@ -337,113 +337,111 @@
     mostrarReceitas(buscaEscolhida, valorBusca);
   }
 
-async function buscarReceitasAPI(filtro, valor) {
-  let url = "https://homecheff-backend.onrender.com/buscar_receitas?";
+  // Ajuste importante: o filtro 'ingredientes' no front, mas na API usa 'ingrediente' (singular)
+  async function buscarReceitasAPI(filtro, valor) {
+    let url = "https://homecheff-backend.onrender.com/buscar_receitas?";
 
-  if (filtro === "nome") {
-    url += `nome=${encodeURIComponent(valor)}`;
-  } else if (filtro === "ingrediente") {
-    url += `ingrediente=${encodeURIComponent(valor)}`;
-  } else if (filtro === "tempo") {
-    url += `tempo_max=${encodeURIComponent(valor)}`;
-  } else {
-    throw new Error("Filtro inválido");
-  }
-
-  try {
-    const resp = await fetch(url);
-    if (!resp.ok) {
-      throw new Error(`Erro na busca: ${resp.status} ${resp.statusText}`);
-    }
-    const data = await resp.json();  // já recebe JSON direto, não precisa parsear texto
-    return data;  // É um array de nomes de receitas (strings)
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
-async function mostrarReceitas(filtro, valor) {
-  criarBolha('Buscando receitas...', 'bot');
-
-  try {
-    const receitasNomes = await buscarReceitasAPI(filtro, valor);
-
-    // Remove a bolha "Buscando receitas..."
-    document.querySelectorAll('.bubble.bot').forEach(b => {
-      if (b.textContent.includes('Buscando receitas')) b.remove();
-    });
-
-    if (receitasNomes.length === 0) {
-      criarBolha('Nenhuma receita encontrada.', 'bot');
-
-      // botão reiniciar busca
-      const reiniciarBtn = document.createElement('button');
-      reiniciarBtn.textContent = 'Reiniciar busca';
-      reiniciarBtn.className = 'option-btn';
-      reiniciarBtn.style.marginTop = '10px';
-      reiniciarBtn.onclick = () => {
-        chatArea.innerHTML = '';
-        iniciarChat();
-      };
-      chatArea.appendChild(reiniciarBtn);
-      chatArea.scrollTop = chatArea.scrollHeight;
-
+    if (filtro === "nome") {
+      url += `nome=${encodeURIComponent(valor)}`;
+    } else if (filtro === "ingredientes") {  // aqui precisa ser 'ingredientes', não 'ingrediente' para bater com front
+      url += `ingrediente=${encodeURIComponent(valor)}`;
+    } else if (filtro === "tempo") {
+      url += `tempo_max=${encodeURIComponent(valor)}`;
     } else {
-      criarBolha('Aqui estão as receitas encontradas:', 'bot');
-
-      receitasNomes.forEach(nomeReceita => {
-        const receitaDiv = document.createElement('div');
-        receitaDiv.className = 'bubble bot';
-        receitaDiv.style.cursor = 'pointer';
-        receitaDiv.style.background = 'var(--lilas)';
-        receitaDiv.style.color = 'var(--roxo)';
-        receitaDiv.style.borderRadius = '15px';
-        receitaDiv.style.marginTop = '6px';
-        receitaDiv.style.fontWeight = '600';
-        receitaDiv.textContent = nomeReceita;
-
-        receitaDiv.onclick = () => mostrarDetalhes(nomeReceita);
-
-        chatArea.appendChild(receitaDiv);
-      });
-      chatArea.scrollTop = chatArea.scrollHeight;
+      throw new Error("Filtro inválido");
     }
 
-  } catch (e) {
-    console.error('Erro na busca:', e);
-    criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) {
+        throw new Error(`Erro na busca: ${resp.status} ${resp.statusText}`);
+      }
+      const data = await resp.json();  // já retorna JSON
+      return data;  // Espera-se um array de strings (nomes de receitas)
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
-}
 
-async function mostrarDetalhes(nomeReceita) {
-  criarBolha(`Buscando detalhes da receita "${nomeReceita}"...`, 'bot');
+  async function mostrarReceitas(filtro, valor) {
+    criarBolha('Buscando receitas...', 'bot');
 
-  try {
-    const resp = await fetch(`https://homecheff-backend.onrender.com/detalhes_receita?nome=${encodeURIComponent(nomeReceita)}`);
-    if (!resp.ok) throw new Error('Erro ao buscar detalhes');
-    const detalhes = await resp.json();
+    try {
+      const receitasNomes = await buscarReceitasAPI(filtro, valor);
 
-    // Remove a mensagem de "buscando detalhes"
-    document.querySelectorAll('.bubble.bot').forEach(b => {
-      if (b.textContent.includes('Buscando detalhes')) b.remove();
-    });
+      // Remove a bolha "Buscando receitas..."
+      document.querySelectorAll('.bubble.bot').forEach(b => {
+        if (b.textContent.includes('Buscando receitas')) b.remove();
+      });
 
-    criarBolha(`Detalhes da receita "${detalhes.nome}":`, 'bot');
-    criarBolha(`- Ingredientes: ${detalhes.ingredientes.join(', ')}`, 'bot');
-    criarBolha(`- Tempo de preparo: ${detalhes.tempo_preparo}`, 'bot');
-    criarBolha(`- Modo de preparo: ${detalhes.preparo}`, 'bot');
+      if (receitasNomes.length === 0) {
+        criarBolha('Nenhuma receita encontrada.', 'bot');
 
-  } catch (e) {
-    console.error(e);
-    criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
+        // Botão reiniciar busca
+        const reiniciarBtn = document.createElement('button');
+        reiniciarBtn.textContent = 'Reiniciar busca';
+        reiniciarBtn.className = 'option-btn';
+        reiniciarBtn.style.marginTop = '10px';
+        reiniciarBtn.onclick = () => {
+          chatArea.innerHTML = '';
+          iniciarChat();
+        };
+        chatArea.appendChild(reiniciarBtn);
+        chatArea.scrollTop = chatArea.scrollHeight;
+
+      } else {
+        criarBolha('Aqui estão as receitas encontradas:', 'bot');
+
+        receitasNomes.forEach(nomeReceita => {
+          const receitaDiv = document.createElement('div');
+          receitaDiv.className = 'bubble bot';
+          receitaDiv.style.cursor = 'pointer';
+          receitaDiv.style.background = 'var(--lilas)';
+          receitaDiv.style.color = 'var(--roxo)';
+          receitaDiv.style.borderRadius = '15px';
+          receitaDiv.style.marginTop = '6px';
+          receitaDiv.style.fontWeight = '600';
+          receitaDiv.textContent = nomeReceita;
+
+          receitaDiv.onclick = () => mostrarDetalhes(nomeReceita);
+
+          chatArea.appendChild(receitaDiv);
+        });
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+
+    } catch (e) {
+      console.error('Erro na busca:', e);
+      criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
+    }
   }
-}
 
-// Chame iniciarChat() depois de declarar as funções
-iniciarChat();
+  async function mostrarDetalhes(nomeReceita) {
+    criarBolha(`Buscando detalhes da receita "${nomeReceita}"...`, 'bot');
 
+    try {
+      const resp = await fetch(`https://homecheff-backend.onrender.com/detalhes_receita?nome=${encodeURIComponent(nomeReceita)}`);
+      if (!resp.ok) throw new Error('Erro ao buscar detalhes');
+      const detalhes = await resp.json();
+
+      // Remove a mensagem de "buscando detalhes"
+      document.querySelectorAll('.bubble.bot').forEach(b => {
+        if (b.textContent.includes('Buscando detalhes')) b.remove();
+      });
+
+      criarBolha(`Detalhes da receita "${detalhes.nome}":`, 'bot');
+      criarBolha(`- Ingredientes: ${detalhes.ingredientes.join(', ')}`, 'bot');
+      criarBolha(`- Tempo de preparo: ${detalhes.tempo_preparo}`, 'bot');
+      criarBolha(`- Modo de preparo: ${detalhes.preparo}`, 'bot');
+
+    } catch (e) {
+      console.error(e);
+      criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
+    }
+  }
+
+  // Inicia o chat ao carregar a página
+  iniciarChat();
 </script>
-
-</body>
 
