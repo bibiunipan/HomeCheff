@@ -154,39 +154,38 @@
 
     input[type="text"]:focus, input[type="number"]:focus {
       border-color: var(--lilas);
+
+     .painel-receita {
+      background: rgba(210, 180, 255, 0.2); /* lilás translúcido */
+      border: 2px solid #8a2be2; /* roxo */
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2); /* efeito 3D sutil */
+      max-width: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      margin-top: 8px;
     }
-    .painel-receita {
-  background: rgba(221, 160, 221, 0.15); /* lilás transparente */
-  border: 2px solid #a855f7; /* roxo */
-  border-radius: 24px;
-  padding: 24px;
-  margin: 20px auto;
-  max-width: 600px;
-  color: #2d2d2d;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(6px); /* efeito de vidro fosco */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+    
+    .painel-receita h2 {
+      margin: 0 0 8px 0;
+      font-size: 1.2em;
+      color: #4b0082; /* roxo mais escuro para contraste */
+    }
+    
+    .painel-receita p,
+    .painel-receita ul {
+      margin: 6px 0;
+      font-size: 0.95em;
+    }
+    
+    .painel-receita ul {
+      padding-left: 20px;
+    }
+    
+    .painel-receita li {
+      margin-bottom: 4px;
+    }
 
-.painel-receita:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
-}
-
-.painel-receita h2 {
-  font-size: 1.5rem;
-  color: #6b21a8; /* roxo escuro */
-  margin-bottom: 12px;
-}
-
-.painel-receita ul {
-  padding-left: 20px;
-  list-style-type: disc;
-}
-
-.painel-receita p {
-  margin: 8px 0;
-}
 
     /* Ajuste do botão enviar (send-btn) para largura total */
     .send-btn {
@@ -462,10 +461,9 @@ async function mostrarDetalhes(nomeReceita) {
       if (b.textContent.includes('Buscando detalhes')) b.remove();
     });
 
-    // Criação do card
+    // Criação do card com as informações
     const card = document.createElement('div');
     card.classList.add('painel-receita');
-
     card.innerHTML = `
       <h2>${detalhes.nome}</h2>
       <p><strong>Tempo de preparo:</strong> ${detalhes.tempo_preparo}</p>
@@ -477,6 +475,7 @@ async function mostrarDetalhes(nomeReceita) {
       <p>${detalhes.modo_preparo || 'Não informado.'}</p>
     `;
 
+    // Encaixa o card dentro de uma bolha do chat
     const bolha = document.createElement('div');
     bolha.classList.add('bubble', 'bot');
     bolha.appendChild(card);
