@@ -61,14 +61,15 @@
     }
 
     .chat-area {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      flex-grow: 1;
-      overflow-y: auto;
-      background: var(--branco);
-    }
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-grow: 1;
+    overflow-y: auto;
+    max-height: calc(95vh - 100px - 52px - 40px);
+    background: var(--branco);
+  }
 
     .bubble {
       max-width: 80%;
@@ -473,15 +474,15 @@ async function mostrarDetalhes(nomeReceita) {
     bolha.classList.add('bubble', 'bot');
     bolha.appendChild(card);
 
-    const chatContainer = document.querySelector('.chat-container') || document.body;
-    chatContainer.appendChild(bolha);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    chatArea.appendChild(bolha);
+    chatArea.scrollTop = chatArea.scrollHeight;  // <<< aqui está a correção
 
   } catch (e) {
     console.error(e);
     criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
   }
 }
+
   // Inicia o chat ao carregar a página
   iniciarChat();
 </script>
