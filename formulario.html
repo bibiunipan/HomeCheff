@@ -211,6 +211,49 @@
         border-radius: 0;
       }
     }
+    /* Estilo do botão logout, igual aos outros, só que exclusivo para ele */
+    .logout-link {
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    #btnLogout {
+      background: var(--branco);
+      color: var(--roxo);
+      border: 2px solid var(--roxo);
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(108, 74, 182, 0.3);
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      min-width: 120px;
+      user-select: none;
+    }
+    
+    #btnLogout:hover,
+    #btnLogout:focus {
+      background-color: var(--roxo);
+      color: var(--branco);
+      transform: scale(1.05);
+      outline: none;
+    }
+
+/* Responsividade para botão logout */
+@media (max-width: 480px) {
+  .logout-link {
+    margin: 15px 10px;
+  }
+
+  #btnLogout {
+    padding: 10px 20px;
+    font-size: 1rem;
+    min-width: 100px;
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -228,18 +271,11 @@
     </div>
 
     <!-- Botão de logout, escondido inicialmente -->
-    <div class="logout-link" id="logoutLink" style="display:none; text-align:center; margin: 20px 0;">
-      <button id="btnLogout" style="
-        background: var(--branco);
-        color: var(--roxo);
-        border: 2px solid var(--roxo);
-        padding: 12px 24px;
-        border-radius: 30px;
-        font-weight: 600;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(108, 74, 182, 0.3);
-        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-      ">Sair</button>
+<!-- Botão de logout, escondido inicialmente -->
+<div class="logout-link" id="logoutLink" style="display:none; text-align:center; margin: 20px 0;">
+  <button id="btnLogout">Sair</button>
+</div>
+
     </div>
   </div>
 
