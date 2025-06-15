@@ -157,48 +157,53 @@
       border-color: var(--lilas);
     }
     .painel-receita {
-    background: #fff; /* fundo branco */
-    border: 2px solid var(--roxo); /* borda roxa */
-    border-radius: 20px; /* cantos arredondados */
-    padding: 20px;
-    box-shadow: 0 6px 16px rgba(108, 74, 182, 0.1); /* sombra suave */
-    max-width: 100%;
-    margin: 20px 0;
-    color: #333;
-    font-family: 'Segoe UI', sans-serif;
-  }
-  
-  .painel-receita h2 {
-    margin-top: 0;
-    color: var(--roxo);
-    font-size: 1.4rem;
-  }
-  
-  .painel-receita ul {
-    padding-left: 20px;
-    margin-top: 10px;
-  }
-  
-  .painel-receita li {
-    margin-bottom: 6px;
-  }
-  
-  .painel-receita .passo {
-    margin-bottom: 8px;
-    line-height: 1.6;
-    position: relative;
-    padding-left: 28px;
-  }
-
-  .painel-receita .passo::before {
-    content: counter(passo) ".";
-    counter-increment: passo;
-    position: absolute;
-    left: 0;
-    color: var(--roxo);
-    font-weight: bold;
-  }
-
+        background: #fff; /* fundo branco */
+        border: 2px solid var(--roxo); /* borda roxa */
+        border-radius: 20px; /* cantos arredondados */
+        padding: 20px;
+        box-shadow: 0 6px 16px rgba(108, 74, 182, 0.1); /* sombra suave */
+        max-width: 100%;
+        margin: 20px 0;
+        color: #333;
+        font-family: 'Segoe UI', sans-serif;
+      }
+      
+      .painel-receita h2 {
+        margin-top: 0;
+        color: var(--roxo);
+        font-size: 1.4rem;
+      }
+      
+      .painel-receita ul {
+        padding-left: 20px;
+        margin-top: 10px;
+      }
+      
+      .painel-receita li {
+        margin-bottom: 6px;
+      }
+      
+      .painel-receita .modo-preparo-container {
+        counter-reset: passo; /* reseta o contador para cada card */
+      }
+      
+      .painel-receita .passo {
+        margin-bottom: 8px;
+        line-height: 1.6;
+        position: relative;
+        padding-left: 28px;
+      }
+      
+      .painel-receita .passo::before {
+        content: counter(passo) ".";
+        counter-increment: passo;
+        position: absolute;
+        left: 0;
+        color: var(--roxo);
+        font-weight: bold;
+      }
+      
+      
 
     /* Ajuste do botão enviar (send-btn) para largura total */
     .send-btn {
@@ -539,17 +544,20 @@ async function mostrarDetalhes(nomeReceita) {
       <p>${detalhes.modo_preparo || 'Não informado.'}</p>
     `;
 
-      // Criação do card com as informações
-    const cardReceita = document.createElement('div');
+    const card = document.createElement('div');
     card.classList.add('painel-receita');
     
-    // Divide o modo de preparo em passos
-    const modoPreparoArray = (detalhes.modo_preparo || 'Não informado.')
-      .split(/[\.\n]\s*/) // separa por ponto final ou quebra de linha
-      .filter(p => p.trim() !== '');
+    // Garante que modo_preparo seja string
+    const modoPreparoStr = detalhes.modo_preparo ? String(detalhes.modo_preparo) : 'Não informado.';
     
-    // Cria os passos numerados
-    const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p.trim()}</div>`).join('');
+    // Divide o modo de preparo em passos, separando por ponto final ou quebra de linha
+    const modoPreparoArray = modoPreparoStr
+      .split(/[\.\n]+/) // um ou mais pontos ou quebras de linha
+      .map(p => p.trim())
+      .filter(p => p !== '');
+    
+    // Cria os passos numerados com uma classe para estilizar
+    const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p}</div>`).join('');
     
     // Define o conteúdo HTML do card
     card.innerHTML = `
@@ -560,13 +568,8 @@ async function mostrarDetalhes(nomeReceita) {
         ${detalhes.ingredientes.map(ing => `<li>${ing}</li>`).join('')}
       </ul>
       <p><strong>Modo de preparo:</strong></p>
-      <div style="counter-reset: passo;">${passosHTML}</div>
+      <div class="modo-preparo-container">${passosHTML}</div>
     `;
-    
-    // Encaixa o card dentro de uma bolha do chat
-    const bolha = document.createElement('div');
-    bolha.classList.add('bubble', 'bot');
-    bolha.appendChild(card);
 
   } catch (e) {
     console.error(e);
