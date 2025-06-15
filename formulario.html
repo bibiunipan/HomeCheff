@@ -213,8 +213,17 @@
     }
     /* Estilo do botão logout, igual aos outros, só que exclusivo para ele */
     .logout-link {
+      background: var(--branco);
+      color: var(--roxo);
+      border: 2px solid var(--roxo);
+      padding: 12px 0;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(108, 74, 182, 0.3);
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
       text-align: center;
-      margin: 20px 0;
+      display: inline-block;
     }
     
     #btnLogout {
