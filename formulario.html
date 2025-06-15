@@ -300,7 +300,9 @@
     <div class="logo-container">
       <img src="logo.png" alt="Logo HomeChef" class="logo" />
     </div>
+
     <div class="welcome-msg" id="welcomeMsg">Bem-vindo ao Home Cheff!</div>
+
     <div class="chat-area" id="chatArea"></div>
 
     <!-- Botão de login -->
@@ -309,266 +311,259 @@
       <a href="login.html">Fazer Login</a>
     </div>
 
-    <!-- Botão de logout, escondido inicialmente -->
-<!-- Botão de logout, escondido inicialmente -->
-<!-- Botão de logout -->
-<div id="logoutLink" style="display:none; text-align:center; margin: 20px 0;">
-  <button id="btnLogout">Sair</button>
-</div>
+    <!-- Botão de logout -->
+    <div id="logoutLink" style="display:none; text-align:center; margin: 20px 0;">
+      <button id="btnLogout">Sair</button>
     </div>
   </div>
 
-<script type="module">
-  import { createClient } from "https://esm.sh/@supabase/supabase-js";
+  <script type="module" src="seu-script.js"></script>
 
-  const supabaseUrl = "https://ytztgkuzvdmlnbzelmct.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0enRna3V6dmRtbG5iemVsbWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwODAyODEsImV4cCI6MjA2NDY1NjI4MX0.UFLTaoKbkenLhL_xu8Zdi3Zv73qR0t9M-KE_Jym4r3k";
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js";
 
-  const chatArea = document.getElementById('chatArea');
-  const welcomeMsg = document.getElementById('welcomeMsg');
-  const loginLink = document.getElementById('loginLink');
-  const logoutLink = document.getElementById('logoutLink');
-  const btnLogout = document.getElementById('btnLogout');
+    const supabaseUrl = "https://ytztgkuzvdmlnbzelmct.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0enRna3V6dmRtbG5iemVsbWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwODAyODEsImV4cCI6MjA2NDY1NjI4MX0.UFLTaoKbkenLhL_xu8Zdi3Zv73qR0t9M-KE_Jym4r3k";
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-  async function verificarSessao() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const chatArea = document.getElementById('chatArea');
+    const welcomeMsg = document.getElementById('welcomeMsg');
+    const loginLink = document.getElementById('loginLink');
+    const logoutLink = document.getElementById('logoutLink');
+    const btnLogout = document.getElementById('btnLogout');
 
-    if (user) {
-      const nomeUsuario = user.user_metadata?.nome || user.email;
-      welcomeMsg.textContent = `Bem-vindo, ${nomeUsuario} ao Home Cheff!`;
-      loginLink.style.display = 'none';
-      logoutLink.style.display = 'block';
-      localStorage.setItem('nomeUsuario', nomeUsuario);
-    }
-  }
+    async function verificarSessao() {
+      const { data: { user } } = await supabase.auth.getUser();
 
-  btnLogout.onclick = async () => {
-    await supabase.auth.signOut();
-    localStorage.removeItem('nomeUsuario');
-    location.reload();
-  };
-
-  verificarSessao();
-
-  // Variáveis para controle do chat
-  let buscaEscolhida = '';
-  let valorBusca = '';
-
-  function criarBolha(texto, classe) {
-    const bubble = document.createElement('div');
-    bubble.classList.add('bubble', classe);
-    bubble.textContent = texto;
-    chatArea.appendChild(bubble);
-    chatArea.scrollTop = chatArea.scrollHeight;
-    return bubble;
-  }
-
-  function criarOpcoes(opcoes) {
-    const div = document.createElement('div');
-    div.classList.add('options');
-    opcoes.forEach(op => {
-      const btn = document.createElement('button');
-      btn.textContent = op.label;
-      btn.className = 'option-btn';
-      btn.onclick = () => escolherOpcao(op.value);
-      div.appendChild(btn);
-    });
-    chatArea.appendChild(div);
-    chatArea.scrollTop = chatArea.scrollHeight;
-    return div;
-  }
-
-  function criarInput(tipo) {
-    const div = document.createElement('div');
-    div.classList.add('input-area');
-    const input = document.createElement('input');
-    input.type = tipo;
-    input.placeholder = tipo === 'text' ? 'Digite aqui...' : 'Número em minutos';
-    input.id = 'inputBusca';
-    div.appendChild(input);
-
-    const btnEnviar = document.createElement('button');
-    btnEnviar.className = 'send-btn';
-    btnEnviar.textContent = 'Enviar';
-    btnEnviar.onclick = () => enviarInput();
-    div.appendChild(btnEnviar);
-
-    chatArea.appendChild(div);
-    chatArea.scrollTop = chatArea.scrollHeight;
-    input.focus();
-    return div;
-  }
-
-  function iniciarChat() {
-    criarBolha("Como você quer buscar sua receita hoje?", 'bot');
-    criarOpcoes([
-      { label: 'Por Nome', value: 'nome' },
-      { label: 'Por Ingredientes', value: 'ingredientes' },
-      { label: 'Por Tempo', value: 'tempo' },
-    ]);
-  }
-
-  function escolherOpcao(valor) {
-    buscaEscolhida = valor;
-    // Remove as opções para evitar cliques duplicados
-    document.querySelectorAll('.options').forEach(el => el.remove());
-
-    criarBolha(`Você escolheu buscar por ${valor === 'nome' ? 'Nome' : valor === 'ingredientes' ? 'Ingredientes' : 'Tempo'}.`, 'user');
-
-    if (valor === 'tempo') {
-      criarBolha("Digite o tempo máximo de preparo em minutos:", 'bot');
-      criarInput('number');
-    } else {
-      criarBolha("Digite o nome da receita para a busca:", 'bot');
-      criarInput('text');
-    }
-  }
-
-  function enviarInput() {
-    const input = document.getElementById('inputBusca');
-    if (!input || !input.value.trim()) {
-      alert('Por favor, preencha o campo.');
-      return;
-    }
-    valorBusca = input.value.trim();
-    input.parentElement.remove();
-    criarBolha(valorBusca, 'user');
-    mostrarReceitas(buscaEscolhida, valorBusca);
-  }
-
-  // Ajuste importante: o filtro 'ingredientes' no front, mas na API usa 'ingrediente' (singular)
-  async function buscarReceitasAPI(filtro, valor) {
-    let url = "https://homecheff-backend.onrender.com/buscar_receitas?";
-
-    if (filtro === "nome") {
-      url += `nome=${encodeURIComponent(valor)}`;
-    } else if (filtro === "ingredientes") {  // aqui precisa ser 'ingredientes', não 'ingrediente' para bater com front
-      url += `ingrediente=${encodeURIComponent(valor)}`;
-    } else if (filtro === "tempo") {
-      url += `tempo_max=${encodeURIComponent(valor)}`;
-    } else {
-      throw new Error("Filtro inválido");
-    }
-
-    try {
-      const resp = await fetch(url);
-      if (!resp.ok) {
-        throw new Error(`Erro na busca: ${resp.status} ${resp.statusText}`);
+      if (user) {
+        const nomeUsuario = user.user_metadata?.nome || user.email;
+        welcomeMsg.textContent = `Bem-vindo, ${nomeUsuario} ao Home Cheff!`;
+        loginLink.style.display = 'none';
+        logoutLink.style.display = 'block';
+        localStorage.setItem('nomeUsuario', nomeUsuario);
       }
-      const data = await resp.json();  // já retorna JSON
-      return data;  // Espera-se um array de strings (nomes de receitas)
-    } catch (error) {
-      console.error(error);
-      throw error;
     }
-  }
 
-  async function mostrarReceitas(filtro, valor) {
-    criarBolha('Buscando receitas...', 'bot');
+    btnLogout.onclick = async () => {
+      await supabase.auth.signOut();
+      localStorage.removeItem('nomeUsuario');
+      location.reload();
+    };
 
-    try {
-      const receitasNomes = await buscarReceitasAPI(filtro, valor);
+    verificarSessao();
 
-      // Remove a bolha "Buscando receitas..."
-      document.querySelectorAll('.bubble.bot').forEach(b => {
-        if (b.textContent.includes('Buscando receitas')) b.remove();
+    // Controle do chat
+    let buscaEscolhida = '';
+    let valorBusca = '';
+
+    function criarBolha(texto, classe) {
+      const bubble = document.createElement('div');
+      bubble.classList.add('bubble', classe);
+      bubble.textContent = texto;
+      chatArea.appendChild(bubble);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      return bubble;
+    }
+
+    function criarOpcoes(opcoes) {
+      const div = document.createElement('div');
+      div.classList.add('options');
+      opcoes.forEach(op => {
+        const btn = document.createElement('button');
+        btn.textContent = op.label;
+        btn.className = 'option-btn';
+        btn.onclick = () => escolherOpcao(op.value);
+        div.appendChild(btn);
       });
+      chatArea.appendChild(div);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      return div;
+    }
 
-      if (receitasNomes.length === 0) {
-        criarBolha('Nenhuma receita encontrada.', 'bot');
+    function criarInput(tipo) {
+      const div = document.createElement('div');
+      div.classList.add('input-area');
+      const input = document.createElement('input');
+      input.type = tipo;
+      input.placeholder = tipo === 'text' ? 'Digite aqui...' : 'Número em minutos';
+      input.id = 'inputBusca';
+      div.appendChild(input);
 
-        // Botão reiniciar busca
-        const reiniciarBtn = document.createElement('button');
-        reiniciarBtn.textContent = 'Reiniciar busca';
-        reiniciarBtn.className = 'option-btn';
-        reiniciarBtn.style.marginTop = '10px';
-        reiniciarBtn.onclick = () => {
-          chatArea.innerHTML = '';
-          iniciarChat();
-        };
-        chatArea.appendChild(reiniciarBtn);
-        chatArea.scrollTop = chatArea.scrollHeight;
+      const btnEnviar = document.createElement('button');
+      btnEnviar.className = 'send-btn';
+      btnEnviar.textContent = 'Enviar';
+      btnEnviar.onclick = () => enviarInput();
+      div.appendChild(btnEnviar);
 
+      chatArea.appendChild(div);
+      chatArea.scrollTop = chatArea.scrollHeight;
+      input.focus();
+      return div;
+    }
+
+    function iniciarChat() {
+      criarBolha("Como você quer buscar sua receita hoje?", 'bot');
+      criarOpcoes([
+        { label: 'Por Nome', value: 'nome' },
+        { label: 'Por Ingredientes', value: 'ingredientes' },
+        { label: 'Por Tempo', value: 'tempo' },
+      ]);
+    }
+
+    function escolherOpcao(valor) {
+      buscaEscolhida = valor;
+      document.querySelectorAll('.options').forEach(el => el.remove());
+
+      criarBolha(`Você escolheu buscar por ${valor === 'nome' ? 'Nome' : valor === 'ingredientes' ? 'Ingredientes' : 'Tempo'}.`, 'user');
+
+      if (valor === 'tempo') {
+        criarBolha("Digite o tempo máximo de preparo em minutos:", 'bot');
+        criarInput('number');
       } else {
-        criarBolha('Aqui estão as receitas encontradas:', 'bot');
+        criarBolha("Digite o nome da receita para a busca:", 'bot');
+        criarInput('text');
+      }
+    }
 
-        receitasNomes.forEach(nomeReceita => {
-          const receitaDiv = document.createElement('div');
-          receitaDiv.className = 'bubble bot';
-          receitaDiv.style.cursor = 'pointer';
-          receitaDiv.style.background = 'var(--lilas)';
-          receitaDiv.style.color = 'var(--roxo)';
-          receitaDiv.style.borderRadius = '15px';
-          receitaDiv.style.marginTop = '6px';
-          receitaDiv.style.fontWeight = '600';
-          receitaDiv.textContent = nomeReceita;
+    function enviarInput() {
+      const input = document.getElementById('inputBusca');
+      if (!input || !input.value.trim()) {
+        alert('Por favor, preencha o campo.');
+        return;
+      }
+      valorBusca = input.value.trim();
+      input.parentElement.remove();
+      criarBolha(valorBusca, 'user');
+      mostrarReceitas(buscaEscolhida, valorBusca);
+    }
 
-          receitaDiv.onclick = () => buscarDetalhesReceita(nomeReceita);
+    async function buscarReceitasAPI(filtro, valor) {
+      let url = "https://homecheff-backend.onrender.com/buscar_receitas?";
 
-          chatArea.appendChild(receitaDiv);
-        });
-        chatArea.scrollTop = chatArea.scrollHeight;
+      if (filtro === "nome") {
+        url += `nome=${encodeURIComponent(valor)}`;
+      } else if (filtro === "ingredientes") {
+        url += `ingrediente=${encodeURIComponent(valor)}`;
+      } else if (filtro === "tempo") {
+        url += `tempo_max=${encodeURIComponent(valor)}`;
+      } else {
+        throw new Error("Filtro inválido");
       }
 
-    } catch (e) {
-      console.error('Erro na busca:', e);
-      criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) {
+          throw new Error(`Erro na busca: ${resp.status} ${resp.statusText}`);
+        }
+        const data = await resp.json();
+        return data;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
     }
-  }
 
-async function buscarDetalhesReceita(nomeReceita) {
-  criarBolha(`Buscando detalhes da receita "${nomeReceita}"...`, 'bot');
+    async function mostrarReceitas(filtro, valor) {
+      criarBolha('Buscando receitas...', 'bot');
 
-  try {
-    const resp = await fetch(`https://homecheff-backend.onrender.com/detalhes_receita?nome=${encodeURIComponent(nomeReceita)}`);
-    if (!resp.ok) throw new Error('Erro ao buscar detalhes');
-  
-    const detalhes = await resp.json();
-  
-    // Remove a bolha de carregamento
-    document.querySelectorAll('.bubble.bot').forEach(b => {
-      if (b.textContent.includes('Buscando detalhes')) b.remove();
-    });
-  
-    // Mostra os detalhes no card
-    mostrarDetalhes(detalhes);
-  
-  } catch (e) {
-    console.error(e);
-    criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
-  }
-}
+      try {
+        const receitasNomes = await buscarReceitasAPI(filtro, valor);
 
-// Exibe os detalhes da receita em um card dentro do chat
-function mostrarDetalhes(detalhes) {
-  const card = document.createElement('div');
-  card.classList.add('painel-receita');
+        document.querySelectorAll('.bubble.bot').forEach(b => {
+          if (b.textContent.includes('Buscando receitas')) b.remove();
+        });
 
-  const modoPreparoStr = detalhes.modo_preparo ? String(detalhes.modo_preparo) : 'Não informado.';
+        if (receitasNomes.length === 0) {
+          criarBolha('Nenhuma receita encontrada.', 'bot');
 
-  const modoPreparoArray = modoPreparoStr
-    .split(',')
-    .map(p => p.trim())
-    .filter(p => p !== '');
+          const reiniciarBtn = document.createElement('button');
+          reiniciarBtn.textContent = 'Reiniciar busca';
+          reiniciarBtn.className = 'option-btn';
+          reiniciarBtn.style.marginTop = '10px';
+          reiniciarBtn.onclick = () => {
+            chatArea.innerHTML = '';
+            iniciarChat();
+          };
+          chatArea.appendChild(reiniciarBtn);
+          chatArea.scrollTop = chatArea.scrollHeight;
 
-  const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p}</div>`).join('');
+        } else {
+          criarBolha('Aqui estão as receitas encontradas:', 'bot');
 
-  card.innerHTML = `
-    <h2>${detalhes.nome}</h2>
-    <p><strong>Tempo de preparo:</strong> ${detalhes.tempo_preparo}</p>
-    <p><strong>Ingredientes:</strong></p>
-    <ul>
-      ${detalhes.ingredientes.map(ing => `<li>${ing}</li>`).join('')}
-    </ul>
-    <p><strong>Modo de preparo:</strong></p>
-    <div class="modo-preparo-container">${passosHTML}</div>
-  `;
+          receitasNomes.forEach(nomeReceita => {
+            const receitaDiv = document.createElement('div');
+            receitaDiv.className = 'bubble bot';
+            receitaDiv.style.cursor = 'pointer';
+            receitaDiv.style.background = 'var(--lilas)';
+            receitaDiv.style.color = 'var(--roxo)';
+            receitaDiv.style.borderRadius = '15px';
+            receitaDiv.style.marginTop = '6px';
+            receitaDiv.style.fontWeight = '600';
+            receitaDiv.textContent = nomeReceita;
 
-  const container = document.getElementById('chatArea');
-  container.appendChild(card);
-}
+            receitaDiv.onclick = () => buscarDetalhesReceita(nomeReceita);
 
-// Inicia o chat ao carregar a página
-iniciarChat();
+            chatArea.appendChild(receitaDiv);
+          });
+          chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+      } catch (e) {
+        console.error('Erro na busca:', e);
+        criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
+      }
+    }
+
+    async function buscarDetalhesReceita(nomeReceita) {
+      criarBolha(`Buscando detalhes da receita "${nomeReceita}"...`, 'bot');
+
+      try {
+        const resp = await fetch(`https://homecheff-backend.onrender.com/detalhes_receita?nome=${encodeURIComponent(nomeReceita)}`);
+        if (!resp.ok) throw new Error('Erro ao buscar detalhes');
+
+        const detalhes = await resp.json();
+
+        document.querySelectorAll('.bubble.bot').forEach(b => {
+          if (b.textContent.includes('Buscando detalhes')) b.remove();
+        });
+
+        mostrarDetalhes(detalhes);
+
+      } catch (e) {
+        console.error(e);
+        criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
+      }
+    }
+
+    function mostrarDetalhes(detalhes) {
+      const card = document.createElement('div');
+      card.classList.add('painel-receita');
+
+      const modoPreparoStr = detalhes.modo_preparo ? String(detalhes.modo_preparo) : 'Não informado.';
+
+      const modoPreparoArray = modoPreparoStr
+        .split(',')
+        .map(p => p.trim())
+        .filter(p => p !== '');
+
+      const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p}</div>`).join('');
+
+      card.innerHTML = `
+        <h2>${detalhes.nome}</h2>
+        <p><strong>Tempo de preparo:</strong> ${detalhes.tempo_preparo}</p>
+        <p><strong>Ingredientes:</strong></p>
+        <ul>
+          ${detalhes.ingredientes.map(ing => `<li>${ing}</li>`).join('')}
+        </ul>
+        <p><strong>Modo de preparo:</strong></p>
+        <div class="modo-preparo-container">${passosHTML}</div>
+      `;
+
+      chatArea.appendChild(card);
+    }
+
+    iniciarChat();
+  </script>
+</body>
+
 
