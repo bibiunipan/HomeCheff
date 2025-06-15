@@ -517,68 +517,58 @@
     }
   }
 
-    // Mostra mensagem de carregamento e busca detalhes da receita
-    async function buscarDetalhesReceita(nomeReceita) {
-      criarBolha(`Buscando detalhes da receita "${nomeReceita}"...`, 'bot');
-    
-      try {
-        const resp = await fetch(`https://homecheff-backend.onrender.com/detalhes_receita?nome=${encodeURIComponent(nomeReceita)}`);
-        if (!resp.ok) throw new Error('Erro ao buscar detalhes');
-    
-        const detalhes = await resp.json();
-    
-        // Remove a bolha de carregamento
-        document.querySelectorAll('.bubble.bot').forEach(b => {
-          if (b.textContent.includes('Buscando detalhes')) b.remove();
-        });
-    
-        // Mostra os detalhes no card
-        mostrarDetalhes(detalhes);
-    
-      } catch (e) {
-        console.error(e);
-        criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
-      }
-    }
-    
-    // Exibe os detalhes da receita em um card dentro do chat
-    function mostrarDetalhes(detalhes) {
-      const card = document.createElement('div');
-      card.classList.add('painel-receita');
-    
-      const modoPreparoStr = detalhes.modo_preparo ? String(detalhes.modo_preparo) : 'Não informado.';
-    
-      const modoPreparoArray = modoPreparoStr
-        .split(',')
-        .map(p => p.trim())
-        .filter(p => p !== '');
-    
-      const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p}</div>`).join('');
-    
-      card.innerHTML = `
-        <h2>${detalhes.nome}</h2>
-        <p><strong>Tempo de preparo:</strong> ${detalhes.tempo_preparo}</p>
-        <p><strong>Ingredientes:</strong></p>
-        <ul>
-          ${detalhes.ingredientes.map(ing => `<li>${ing}</li>`).join('')}
-        </ul>
-        <p><strong>Modo de preparo:</strong></p>
-        <div class="modo-preparo-container">${passosHTML}</div>
-      `;
-    
-      const container = document.getElementById('chatArea');
-      container.appendChild(card);
-    }
+async function buscarDetalhesReceita(nomeReceita) {
+  criarBolha(`Buscando detalhes da receita "${nomeReceita}"...`, 'bot');
 
-      } catch (e) {
-        console.error(e);
-        criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
-      }
-    }
+  try {
+    const resp = await fetch(`https://homecheff-backend.onrender.com/detalhes_receita?nome=${encodeURIComponent(nomeReceita)}`);
+    if (!resp.ok) throw new Error('Erro ao buscar detalhes');
+  
+    const detalhes = await resp.json();
+  
+    // Remove a bolha de carregamento
+    document.querySelectorAll('.bubble.bot').forEach(b => {
+      if (b.textContent.includes('Buscando detalhes')) b.remove();
+    });
+  
+    // Mostra os detalhes no card
+    mostrarDetalhes(detalhes);
+  
+  } catch (e) {
+    console.error(e);
+    criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
+  }
+}
 
-    // Inicia o chat ao carregar a página
-    iniciarChat();
-  });
-</script>
+// Exibe os detalhes da receita em um card dentro do chat
+function mostrarDetalhes(detalhes) {
+  const card = document.createElement('div');
+  card.classList.add('painel-receita');
 
+  const modoPreparoStr = detalhes.modo_preparo ? String(detalhes.modo_preparo) : 'Não informado.';
+
+  const modoPreparoArray = modoPreparoStr
+    .split(',')
+    .map(p => p.trim())
+    .filter(p => p !== '');
+
+  const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p}</div>`).join('');
+
+  card.innerHTML = `
+    <h2>${detalhes.nome}</h2>
+    <p><strong>Tempo de preparo:</strong> ${detalhes.tempo_preparo}</p>
+    <p><strong>Ingredientes:</strong></p>
+    <ul>
+      ${detalhes.ingredientes.map(ing => `<li>${ing}</li>`).join('')}
+    </ul>
+    <p><strong>Modo de preparo:</strong></p>
+    <div class="modo-preparo-container">${passosHTML}</div>
+  `;
+
+  const container = document.getElementById('chatArea');
+  container.appendChild(card);
+}
+
+// Inicia o chat ao carregar a página
+iniciarChat();
 
