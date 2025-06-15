@@ -530,23 +530,20 @@ async function mostrarDetalhes(nomeReceita) {
       if (b.textContent.includes('Buscando detalhes')) b.remove();
     });
 
-   // Criação do card com as informações
+document.addEventListener('DOMContentLoaded', () => {
+  function mostrarDetalhes(detalhes) {
     const card = document.createElement('div');
     card.classList.add('painel-receita');
-    
-    // Garante que modo_preparo seja string
+
     const modoPreparoStr = detalhes.modo_preparo ? String(detalhes.modo_preparo) : 'Não informado.';
-    
-    // Divide o modo de preparo em passos, separando por vírgula
+
     const modoPreparoArray = modoPreparoStr
       .split(',')
       .map(p => p.trim())
       .filter(p => p !== '');
-    
-    // Cria os passos numerados com uma classe para estilizar
+
     const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p}</div>`).join('');
-    
-    // Define o conteúdo HTML do card
+
     card.innerHTML = `
       <h2>${detalhes.nome}</h2>
       <p><strong>Tempo de preparo:</strong> ${detalhes.tempo_preparo}</p>
@@ -557,9 +554,10 @@ async function mostrarDetalhes(nomeReceita) {
       <p><strong>Modo de preparo:</strong></p>
       <div class="modo-preparo-container">${passosHTML}</div>
     `;
-    
-   const container = document.getElementById('chatArea');
-   container.appendChild(card);
+
+    const container = document.getElementById('chatArea');
+    container.appendChild(card);
+  }
     
   } catch (e) {
     console.error(e);
