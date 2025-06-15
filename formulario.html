@@ -156,48 +156,48 @@
     input[type="text"]:focus, input[type="number"]:focus {
       border-color: var(--lilas);
     }
-     .painel-receita {
-  background: #fff; /* fundo branco */
-  border: 2px solid var(--roxo); /* borda roxa */
-  border-radius: 20px; /* cantos arredondados */
-  padding: 20px;
-  box-shadow: 0 6px 16px rgba(108, 74, 182, 0.1); /* sombra suave */
-  max-width: 100%;
-  margin: 20px 0;
-  color: #333;
-  font-family: 'Segoe UI', sans-serif;
-}
+    .painel-receita {
+    background: #fff; /* fundo branco */
+    border: 2px solid var(--roxo); /* borda roxa */
+    border-radius: 20px; /* cantos arredondados */
+    padding: 20px;
+    box-shadow: 0 6px 16px rgba(108, 74, 182, 0.1); /* sombra suave */
+    max-width: 100%;
+    margin: 20px 0;
+    color: #333;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .painel-receita h2 {
+    margin-top: 0;
+    color: var(--roxo);
+    font-size: 1.4rem;
+  }
+  
+  .painel-receita ul {
+    padding-left: 20px;
+    margin-top: 10px;
+  }
+  
+  .painel-receita li {
+    margin-bottom: 6px;
+  }
+  
+  .painel-receita .passo {
+    margin-bottom: 8px;
+    line-height: 1.6;
+    position: relative;
+    padding-left: 28px;
+  }
 
-.painel-receita h2 {
-  margin-top: 0;
-  color: var(--roxo);
-  font-size: 1.4rem;
-}
-
-.painel-receita ul {
-  padding-left: 20px;
-  margin-top: 10px;
-}
-
-.painel-receita li {
-  margin-bottom: 6px;
-}
-
-.painel-receita .passo {
-  margin-bottom: 8px;
-  line-height: 1.6;
-  position: relative;
-  padding-left: 28px;
-}
-
-.painel-receita .passo::before {
-  content: counter(passo) ".";
-  counter-increment: passo;
-  position: absolute;
-  left: 0;
-  color: var(--roxo);
-  font-weight: bold;
-}
+  .painel-receita .passo::before {
+    content: counter(passo) ".";
+    counter-increment: passo;
+    position: absolute;
+    left: 0;
+    color: var(--roxo);
+    font-weight: bold;
+  }
 
 
     /* Ajuste do botão enviar (send-btn) para largura total */
@@ -539,34 +539,34 @@ async function mostrarDetalhes(nomeReceita) {
       <p>${detalhes.modo_preparo || 'Não informado.'}</p>
     `;
 
-  // Criação do card com as informações
-const card = document.createElement('div');
-card.classList.add('painel-receita');
-
-// Divide o modo de preparo em passos
-const modoPreparoArray = (detalhes.modo_preparo || 'Não informado.')
-  .split(/[\.\n]\s*/) // separa por ponto final ou quebra de linha
-  .filter(p => p.trim() !== '');
-
-// Cria os passos numerados
-const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p.trim()}</div>`).join('');
-
-// Define o conteúdo HTML do card
-card.innerHTML = `
-  <h2>${detalhes.nome}</h2>
-  <p><strong>Tempo de preparo:</strong> ${detalhes.tempo_preparo}</p>
-  <p><strong>Ingredientes:</strong></p>
-  <ul>
-    ${detalhes.ingredientes.map(ing => `<li>${ing}</li>`).join('')}
-  </ul>
-  <p><strong>Modo de preparo:</strong></p>
-  <div style="counter-reset: passo;">${passosHTML}</div>
-`;
-
-// Encaixa o card dentro de uma bolha do chat
-const bolha = document.createElement('div');
-bolha.classList.add('bubble', 'bot');
-bolha.appendChild(card);
+      // Criação do card com as informações
+    const card = document.createElement('div');
+    card.classList.add('painel-receita');
+    
+    // Divide o modo de preparo em passos
+    const modoPreparoArray = (detalhes.modo_preparo || 'Não informado.')
+      .split(/[\.\n]\s*/) // separa por ponto final ou quebra de linha
+      .filter(p => p.trim() !== '');
+    
+    // Cria os passos numerados
+    const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p.trim()}</div>`).join('');
+    
+    // Define o conteúdo HTML do card
+    card.innerHTML = `
+      <h2>${detalhes.nome}</h2>
+      <p><strong>Tempo de preparo:</strong> ${detalhes.tempo_preparo}</p>
+      <p><strong>Ingredientes:</strong></p>
+      <ul>
+        ${detalhes.ingredientes.map(ing => `<li>${ing}</li>`).join('')}
+      </ul>
+      <p><strong>Modo de preparo:</strong></p>
+      <div style="counter-reset: passo;">${passosHTML}</div>
+    `;
+    
+    // Encaixa o card dentro de uma bolha do chat
+    const bolha = document.createElement('div');
+    bolha.classList.add('bubble', 'bot');
+    bolha.appendChild(card);
 
   } catch (e) {
     console.error(e);
