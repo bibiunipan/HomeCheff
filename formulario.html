@@ -552,10 +552,10 @@ async function mostrarDetalhes(nomeReceita) {
     
     // Divide o modo de preparo em passos, separando por ponto final ou quebra de linha
     const modoPreparoArray = modoPreparoStr
-      .split(/[\.\n]+/) // um ou mais pontos ou quebras de linha
+      .split(',')
       .map(p => p.trim())
       .filter(p => p !== '');
-    
+
     // Cria os passos numerados com uma classe para estilizar
     const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p}</div>`).join('');
     
