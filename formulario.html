@@ -539,13 +539,34 @@ async function mostrarDetalhes(nomeReceita) {
       <p>${detalhes.modo_preparo || 'Não informado.'}</p>
     `;
 
-    // Encaixa o card dentro de uma bolha do chat
-    const bolha = document.createElement('div');
-    bolha.classList.add('bubble', 'bot');
-    bolha.appendChild(card);
+  // Criação do card com as informações
+const card = document.createElement('div');
+card.classList.add('painel-receita');
 
-    chatArea.appendChild(bolha);
-    chatArea.scrollTop = chatArea.scrollHeight;  // <<< aqui está a correção
+// Divide o modo de preparo em passos
+const modoPreparoArray = (detalhes.modo_preparo || 'Não informado.')
+  .split(/[\.\n]\s*/) // separa por ponto final ou quebra de linha
+  .filter(p => p.trim() !== '');
+
+// Cria os passos numerados
+const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p.trim()}</div>`).join('');
+
+// Define o conteúdo HTML do card
+card.innerHTML = `
+  <h2>${detalhes.nome}</h2>
+  <p><strong>Tempo de preparo:</strong> ${detalhes.tempo_preparo}</p>
+  <p><strong>Ingredientes:</strong></p>
+  <ul>
+    ${detalhes.ingredientes.map(ing => `<li>${ing}</li>`).join('')}
+  </ul>
+  <p><strong>Modo de preparo:</strong></p>
+  <div style="counter-reset: passo;">${passosHTML}</div>
+`;
+
+// Encaixa o card dentro de uma bolha do chat
+const bolha = document.createElement('div');
+bolha.classList.add('bubble', 'bot');
+bolha.appendChild(card);
 
   } catch (e) {
     console.error(e);
