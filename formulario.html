@@ -544,7 +544,7 @@ async function mostrarDetalhes(nomeReceita) {
       <p>${detalhes.modo_preparo || 'Não informado.'}</p>
     `;
 
-    const card = document.createElement('div');
+    const cardReceitas = document.createElement('div');
     card.classList.add('painel-receita');
     
     // Garante que modo_preparo seja string
