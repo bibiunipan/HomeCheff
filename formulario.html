@@ -558,10 +558,9 @@ async function mostrarDetalhes(nomeReceita) {
       <div class="modo-preparo-container">${passosHTML}</div>
     `;
     
-    // Agora você pode encaixar o card no seu container, por exemplo:
-    container.appendChild(card);
-
-
+   const container = document.getElementById('chatArea');
+   container.appendChild(card);
+    
   } catch (e) {
     console.error(e);
     criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
