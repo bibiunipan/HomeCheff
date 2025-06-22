@@ -477,54 +477,54 @@
     async function mostrarReceitas(filtro, valor) {
       criarBolha('Buscando receitas...', 'bot');
 
-    try {
-      const receitasNomes = await buscarReceitasAPI(filtro, valor);
-      console.log(receitasNomes);
-    
-      document.querySelectorAll('.bubble.bot').forEach(b => {
-        if (b.textContent.includes('Buscando receitas')) b.remove();
-      });
-    
-      if (receitasNomes.length === 0) {
-        criarBolha('Nenhuma receita encontrada.', 'bot');
-    
-        const reiniciarBtn = document.createElement('button');
-        reiniciarBtn.textContent = 'Reiniciar busca';
-        reiniciarBtn.className = 'option-btn';
-        reiniciarBtn.style.marginTop = '10px';
-        reiniciarBtn.onclick = () => {
-          chatArea.innerHTML = '';
-          iniciarChat();
-        };
-        chatArea.appendChild(reiniciarBtn);
-        chatArea.scrollTop = chatArea.scrollHeight;
-    
-      } else {
-        criarBolha('Aqui estão as receitas encontradas:', 'bot');
-    
-        receitasNomes.forEach(receita => {
-          const receitaDiv = document.createElement('div');
-          receitaDiv.className = 'bubble bot';
-          receitaDiv.style.cursor = 'pointer';
-          receitaDiv.style.background = 'var(--lilas)';
-          receitaDiv.style.color = 'var(--roxo)';
-          receitaDiv.style.borderRadius = '15px';
-          receitaDiv.style.marginTop = '6px';
-          receitaDiv.style.fontWeight = '600';
-          receitaDiv.textContent = receita.nome;  // corrigido para pegar a propriedade nome
-    
-          receitaDiv.onclick = () => buscarDetalhesReceita(receita.nome);
-    
-          chatArea.appendChild(receitaDiv);
+      try {
+        const receitasNomes = await buscarReceitasAPI(filtro, valor);
+        console.log(receitasNomes);
+      
+        document.querySelectorAll('.bubble.bot').forEach(b => {
+          if (b.textContent.includes('Buscando receitas')) b.remove();
         });
-        chatArea.scrollTop = chatArea.scrollHeight;
+      
+        if (receitasNomes.length === 0) {
+          criarBolha('Nenhuma receita encontrada.', 'bot');
+      
+          const reiniciarBtn = document.createElement('button');
+          reiniciarBtn.textContent = 'Reiniciar busca';
+          reiniciarBtn.className = 'option-btn';
+          reiniciarBtn.style.marginTop = '10px';
+          reiniciarBtn.onclick = () => {
+            chatArea.innerHTML = '';
+            iniciarChat();
+          };
+          chatArea.appendChild(reiniciarBtn);
+          chatArea.scrollTop = chatArea.scrollHeight;
+      
+        } else {
+          criarBolha('Aqui estão as receitas encontradas:', 'bot');
+      
+          receitasNomes.forEach(receita => {
+            const receitaDiv = document.createElement('div');
+            receitaDiv.className = 'bubble bot';
+            receitaDiv.style.cursor = 'pointer';
+            receitaDiv.style.background = 'var(--lilas)';
+            receitaDiv.style.color = 'var(--roxo)';
+            receitaDiv.style.borderRadius = '15px';
+            receitaDiv.style.marginTop = '6px';
+            receitaDiv.style.fontWeight = '600';
+            receitaDiv.textContent = receita.nome;  // corrigido para pegar a propriedade nome
+      
+            receitaDiv.onclick = () => buscarDetalhesReceita(receita.nome);
+      
+            chatArea.appendChild(receitaDiv);
+          });
+          chatArea.scrollTop = chatArea.scrollHeight;
+        }
+      
+      } catch (e) {
+        console.error('Erro na busca:', e);
+        criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
       }
-    
-    } catch (e) {
-      console.error('Erro na busca:', e);
-      criarBolha('Erro ao buscar receitas. Tente novamente mais tarde.', 'bot');
-    }
- }
+   }
     async function buscarDetalhesReceita(nomeReceita) {
       criarBolha(`Buscando detalhes da receita "${nomeReceita}"...`, 'bot');
 
@@ -545,6 +545,7 @@
         criarBolha('Erro ao buscar os detalhes da receita. Tente novamente.', 'bot');
       }
     }
+
 
     function mostrarDetalhes(detalhes) {
       const card = document.createElement('div');
