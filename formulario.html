@@ -480,6 +480,7 @@
 
       try {
         const receitasNomes = await buscarReceitasAPI(filtro, valor);
+        console.log(receitasNomes);
 
         document.querySelectorAll('.bubble.bot').forEach(b => {
           if (b.textContent.includes('Buscando receitas')) b.remove();
