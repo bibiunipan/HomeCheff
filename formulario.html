@@ -202,7 +202,13 @@
         color: var(--roxo);
         font-weight: bold;
       }
-      
+
+      .substituto {
+        color: var(--roxo);
+        font-size: 0.9rem;
+        margin-left: 6px;
+        font-style: italic;
+      }
       
 
     /* Ajuste do botão enviar (send-btn) para largura total */
@@ -544,26 +550,38 @@
     function mostrarDetalhes(detalhes) {
       const card = document.createElement('div');
       card.classList.add('painel-receita');
-
+    
       const modoPreparoStr = detalhes.modo_preparo ? String(detalhes.modo_preparo) : 'Não informado.';
-
+    
       const modoPreparoArray = modoPreparoStr
         .split(',')
         .map(p => p.trim())
         .filter(p => p !== '');
-
+    
       const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p}</div>`).join('');
-
+    
+      const listaIngredientes = detalhes.ingredientes.map((ing, i) => {
+        const substituicoes = detalhes.substituicoes || [];
+        const subst = substituicoes[i];
+    
+        if (subst && subst !== ing) {
+          return `<li>${ing} <span class="substituto">(substituído por: ${subst})</span></li>`;
+        } else {
+          return `<li>${ing}</li>`;
+        }
+      }).join('');
+    
       card.innerHTML = `
         <h2>${detalhes.nome}</h2>
         <p><strong>Tempo de preparo:</strong> ${detalhes.tempo_preparo}</p>
         <p><strong>Ingredientes:</strong></p>
         <ul>
-          ${detalhes.ingredientes.map(ing => `<li>${ing}</li>`).join('')}
+          ${listaIngredientes}
         </ul>
         <p><strong>Modo de preparo:</strong></p>
         <div class="modo-preparo-container">${passosHTML}</div>
       `;
+
 
       chatArea.appendChild(card);
     }
