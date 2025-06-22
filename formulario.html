@@ -439,7 +439,8 @@
 
     async function buscarReceitasAPI(filtro, valor) {
       let url = "https://homecheff-backend.onrender.com/buscar_receitas?";
-
+      const { data: { user } } = await supabase.auth.getUser();
+    
       if (filtro === "nome") {
         url += `nome=${encodeURIComponent(valor)}`;
       } else if (filtro === "ingredientes") {
@@ -449,7 +450,11 @@
       } else {
         throw new Error("Filtro inválido");
       }
-
+    
+      if (user && user.email) {
+        url += `&email=${encodeURIComponent(user.email)}`;
+      }
+    
       try {
         const resp = await fetch(url);
         if (!resp.ok) {
@@ -462,6 +467,7 @@
         throw error;
       }
     }
+
 
     async function mostrarReceitas(filtro, valor) {
       criarBolha('Buscando receitas...', 'bot');
