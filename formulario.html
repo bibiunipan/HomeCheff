@@ -532,7 +532,9 @@
       try {
         const { data: { user } } = await supabase.auth.getUser();
         const email = user?.email || '';
-    
+        console.log("Detalhes recebidos:", detalhes);
+
+  
         const url = new URL("https://homecheff-backend.onrender.com/detalhes_receita");
         url.searchParams.append("nome", nomeReceita);
         if (email) url.searchParams.append("email", email);
@@ -555,7 +557,7 @@
     }
 
 
-    function mostrarDetalhes(detalhes) {
+    async function mostrarDetalhes(detalhes) {
       const card = document.createElement('div');
       card.classList.add('painel-receita');
     
@@ -568,8 +570,9 @@
     
       const passosHTML = modoPreparoArray.map(p => `<div class="passo">${p}</div>`).join('');
     
+      const substituicoes = detalhes.substituicoes || [];
+    
       const listaIngredientes = detalhes.ingredientes.map((ing, i) => {
-        const substituicoes = detalhes.substituicoes || [];
         const subst = substituicoes[i];
     
         if (subst && subst !== ing) {
@@ -589,10 +592,10 @@
         <p><strong>Modo de preparo:</strong></p>
         <div class="modo-preparo-container">${passosHTML}</div>
       `;
-
-
+    
       chatArea.appendChild(card);
     }
+
 
     iniciarChat();
   </script>
