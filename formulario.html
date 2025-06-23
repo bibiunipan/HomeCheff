@@ -407,11 +407,11 @@
     }
 
     function iniciarChat() {
-      criarBolha("Como você quer buscar sua receita hoje?", 'bot');
+      criarBolha("Como você quer buscar sua receita hoje?👨‍🍳", 'bot');
       criarOpcoes([
-        { label: 'Por Nome', value: 'nome' },
-        { label: 'Por Ingredientes', value: 'ingredientes' },
-        { label: 'Por Tempo', value: 'tempo' },
+        { label: 'Por Nome 🔍', value: 'nome' },
+        { label: 'Por Ingredientes 🥕🥚🧀', value: 'ingredientes' },
+        { label: 'Por Tempo ⏱️', value: 'tempo' },
       ]);
     }
 
@@ -594,7 +594,35 @@
     
       chatArea.appendChild(card);
     }
-
+    setTimeout(() => {
+      criarBolha('Deseja buscar outra receita?', 'bot');
+    
+      const opcoes = document.createElement('div');
+      opcoes.className = 'options';
+    
+      const btnSim = document.createElement('button');
+      btnSim.textContent = 'Sim';
+      btnSim.className = 'option-btn';
+      btnSim.onclick = () => {
+        opcoes.remove();
+        chatArea.innerHTML = '';
+        iniciarChat();
+      };
+    
+      const btnNao = document.createElement('button');
+      btnNao.textContent = 'Não';
+      btnNao.className = 'option-btn';
+      btnNao.onclick = () => {
+        opcoes.remove();
+        criarBolha('Até logo, chefe! 👋', 'bot');
+      };
+    
+      opcoes.appendChild(btnSim);
+      opcoes.appendChild(btnNao);
+      chatArea.appendChild(opcoes);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }, 500);
+    
 
     iniciarChat();
   </script>
